@@ -1,14 +1,12 @@
 # OpenWrt vanilla firmware for GL.iNet GL-MT300N-V2
-## Description
 
+## Description
 [GL.iNet](https://www.gl-inet.com/) [GL-MT300N-V2](https://www.gl-inet.com/products/gl-mt300n-v2/) is cheap Wi-Fi router. However, it is good hardware that OpenWrt works easily.
 
 ## Reference
-[Hardware Specification](https://docs.gl-inet.com/en/3/hardware/mt300n-v2/)
-
-[OpenWrt](https://openwrt.org/toh/hwdata/gl.inet/gl.inet_gl-mt300n_v2)
-
-[OpenWrt:Techdata](https://openwrt.org/toh/gl.inet/gl.inet_gl-mt300n_v2)
+- [Hardware Specification](https://docs.gl-inet.com/en/3/hardware/mt300n-v2/)
+- [OpenWrt](https://openwrt.org/toh/hwdata/gl.inet/gl.inet_gl-mt300n_v2)
+- [OpenWrt:Techdata](https://openwrt.org/toh/gl.inet/gl.inet_gl-mt300n_v2)
 
 ## Build
 Build firmware on **your Docker environment.**
