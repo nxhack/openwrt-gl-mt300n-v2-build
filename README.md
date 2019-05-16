@@ -21,3 +21,4 @@ docker run -it gl:1
 cd openwrt
 ./build.sh
 ```
+**It will take several hours.**
