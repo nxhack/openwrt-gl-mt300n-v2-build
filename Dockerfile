@@ -24,6 +24,7 @@ WORKDIR /home/openwrt
 
 RUN git clone https://github.com/openwrt/openwrt.git
 ADD --chown=openwrt:openwrt gl-mt300n-v2.diffconfig build.sh rebuild.sh ./openwrt/
+RUN chmod +x ./openwrt/*.sh
 
 #
 # For the first time build:
