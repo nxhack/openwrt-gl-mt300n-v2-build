@@ -10,7 +10,7 @@
 [OpenWrt:Techdata](https://openwrt.org/toh/gl.inet/gl.inet_gl-mt300n_v2)
 
 ## Build
-How to build firmware on your Docker environment.
+Build firmware on your Docker environment.
 
 ```bash
 mkdir Build_Path_Some_Where
