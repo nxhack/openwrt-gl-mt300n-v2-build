@@ -7,10 +7,11 @@
 [Hardware Specification](https://docs.gl-inet.com/en/3/hardware/mt300n-v2/)
 
 [OpenWrt](https://openwrt.org/toh/hwdata/gl.inet/gl.inet_gl-mt300n_v2)
+
 [OpenWrt:Techdata](https://openwrt.org/toh/gl.inet/gl.inet_gl-mt300n_v2)
 
 ## Build
-Build firmware on your Docker environment.
+Build firmware on **your Docker environment.**
 
 ```bash
 mkdir Build_Path_Some_Where
