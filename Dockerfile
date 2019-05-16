@@ -22,10 +22,8 @@ USER openwrt
 ENV HOME /home/openwrt
 WORKDIR /home/openwrt
 
-RUN git clone https://github.com/openwrt/openwrt.git && \
-ADD gl-mt300n-v2.diffconfig ./openwrt/ && \
-ADD build.sh ./openwrt/ && \
-ADD rebuild.sh ./openwrt/
+RUN git clone https://github.com/openwrt/openwrt.git
+ADD gl-mt300n-v2.diffconfig build.sh rebuild.sh ./openwrt/
 
 #
 # For the first time build:
