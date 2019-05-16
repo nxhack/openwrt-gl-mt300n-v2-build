@@ -59,6 +59,12 @@ fi
 if [ -e 'backups/key-build.pub' ]; then
     cp ./backups/key-build.pub .
 fi
+if [ -e 'backups/key-build.ucert' ]; then
+    cp ./backups/key-build.ucert .
+fi
+if [ -e 'backups/key-build.ucert.revoke' ]; then
+    cp ./backups/key-build.ucert.revoke .
+fi
 
 #FEEDS
 ./scripts/feeds uninstall -a
