@@ -1,4 +1,4 @@
-# OpenWrt vanilla firmware for GL.iNet GL-MT300N-V2
+# OpenWrt mocha firmware for GL.iNet GL-MT300N-V2
 
 ## Description
 [GL.iNet](https://www.gl-inet.com/) [GL-MT300N-V2](https://www.gl-inet.com/products/gl-mt300n-v2/) is cheap Wi-Fi router. However, it is good hardware that OpenWrt works easily.
