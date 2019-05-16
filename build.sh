@@ -63,5 +63,6 @@ if [ -e '.config' ]; then
     mv .config ./backups/feeds-config.${BUILD_DATE}-$$
 fi
 
+cp gl-mt300n-v2.diffconfig .config
 make defconfig
 make
