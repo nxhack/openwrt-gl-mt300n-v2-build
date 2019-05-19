@@ -25,7 +25,6 @@ cd openwrt
 
 ## Setup
 ### Shadowsocks
--[forward all](https://github.com/openwrt/packages/tree/master/net/shadowsocks-libev#recipes)
+- [forward all](https://github.com/openwrt/packages/tree/master/net/shadowsocks-libev#recipes)
 
 ### DNS over TLS
-
