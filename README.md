@@ -28,3 +28,6 @@ cd openwrt
 - [forward all](https://github.com/openwrt/packages/tree/master/net/shadowsocks-libev#recipes)
 
 ### DNS over TLS
+- [stubby](https://openwrt.org/docs/guide-user/services/dns/stubby)
+- [Privacy-Protecting Portable Router: Adding DNS-Over-TLS support to OpenWRT (LEDE) with Unbound](https://blog.cloudflare.com/dns-over-tls-for-openwrt/)
+- [Configuring DNS over TLS with LuCI using Stubby and Dnsmasq](https://forum.openwrt.org/t/tutorial-no-cli-configuring-dns-over-tls-with-luci-using-stubby-and-dnsmasq/29143)
