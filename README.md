@@ -31,3 +31,20 @@ cd openwrt
 - [stubby](https://openwrt.org/docs/guide-user/services/dns/stubby)
 - [Privacy-Protecting Portable Router: Adding DNS-Over-TLS support to OpenWRT (LEDE) with Unbound](https://blog.cloudflare.com/dns-over-tls-for-openwrt/)
 - [Configuring DNS over TLS with LuCI using Stubby and Dnsmasq](https://forum.openwrt.org/t/tutorial-no-cli-configuring-dns-over-tls-with-luci-using-stubby-and-dnsmasq/29143)
+
+
+### TCP BBR
+```
+CONFIG_PACKAGE_kmod-sched=y
+CONFIG_PACKAGE_kmod-tcp-bbr=y
+```
+
+```bash
+sysctl -w net.ipv4.tcp_congestion_control=bbr
+sysctl -w net.core.default_qdisc=fq
+```
+
+### TCP FAST OPEN
+```bash
+sysctl -w net.ipv4.tcp_fastopen=3
+```
