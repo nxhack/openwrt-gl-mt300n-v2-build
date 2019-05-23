@@ -26,6 +26,8 @@ cd openwrt
 ## Setup
 ### Shadowsocks
 - [forward all](https://github.com/openwrt/packages/tree/master/net/shadowsocks-libev#recipes)
+- [SIP003 plugin based on v2ray](https://github.com/shadowsocks/v2ray-plugin)
+- [v2ray-plugin OpenWrt custom package](https://github.com/nxhack/openwrt-custom-packages/tree/master/v2ray-plugin)
 
 ### DNS over TLS
 - [stubby](https://openwrt.org/docs/guide-user/services/dns/stubby)
