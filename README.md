@@ -54,7 +54,7 @@ sysctl -w net.ipv4.tcp_fastopen=3
 ### rng-tools
 ```bach
 uci set system.@rngd[0].enabled="1"
-uci set system.@rngd[0].device="/dev/hwrng"
+uci set system.@rngd[0].device="/dev/urandom"
 uci set system.@rngd[0].fill_watermark="4000"
 uci commit system
 service rngd restart
