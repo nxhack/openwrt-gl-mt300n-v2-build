@@ -4,7 +4,7 @@ START=23
 
 start() {
 	uci set system.@rngd[0].enabled='1'
-	uci set system.@rngd[0].device="/dev/hwrng"
-	uci set system.@rngd[0].fill_watermark="4000"
+	uci set system.@rngd[0].device='/dev/hwrng'
+	uci set system.@rngd[0].fill_watermark='4000'
 	uci commit
 }
