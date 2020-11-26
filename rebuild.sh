@@ -6,6 +6,7 @@ git pull
 
 # If you do not want to change the settings, please comment out.
 cp gl-mt300n-v2.diffconfig .config
+#cp gl-ar750s-ext.diffconfig .config
 
 make defconfig
 make
