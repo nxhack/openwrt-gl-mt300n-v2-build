@@ -22,7 +22,7 @@ USER openwrt
 ENV HOME /home/openwrt
 WORKDIR /home/openwrt
 
-RUN git clone https://github.com/openwrt/openwrt.git
+RUN git clone -b v21.02.3 https://github.com/openwrt/openwrt.git
 ADD --chown=openwrt:openwrt *.diffconfig *.sh ./openwrt/
 RUN chmod +x ./openwrt/*.sh
 
