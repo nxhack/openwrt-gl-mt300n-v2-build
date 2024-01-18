@@ -1,8 +1,8 @@
 diff --git a/config/Config-kernel.in b/config/Config-kernel.in
-index c1bc7984f7..36194d42ab 100644
+index 4c43190e40..6688384a7e 100644
 --- a/config/Config-kernel.in
 +++ b/config/Config-kernel.in
-@@ -1045,6 +1045,12 @@ if KERNEL_IP_MROUTE
+@@ -1125,6 +1125,12 @@ if KERNEL_IP_MROUTE
  
  endif
  
@@ -15,7 +15,7 @@ index c1bc7984f7..36194d42ab 100644
  #
  # IPv6 configuration
  #
-@@ -1086,6 +1092,13 @@ if KERNEL_IPV6
+@@ -1166,6 +1172,13 @@ if KERNEL_IPV6
  	config KERNEL_LWTUNNEL_BPF
  		def_bool n
  
@@ -30,10 +30,10 @@ index c1bc7984f7..36194d42ab 100644
  
  #
 diff --git a/package/kernel/linux/modules/netsupport.mk b/package/kernel/linux/modules/netsupport.mk
-index 27268ee043..f944968d97 100644
+index fcf327b434..d8a4909b33 100644
 --- a/package/kernel/linux/modules/netsupport.mk
 +++ b/package/kernel/linux/modules/netsupport.mk
-@@ -1459,6 +1459,23 @@ endef
+@@ -1477,6 +1477,23 @@ endef
  $(eval $(call KernelPackage,xdp-sockets-diag))
  
  
