@@ -151,6 +151,7 @@ CONFIG_PACKAGE_dosfstools=y
 CONFIG_PACKAGE_drill=y
 CONFIG_PACKAGE_dropbearconvert=y
 CONFIG_PACKAGE_ethtool=y
+CONFIG_PACKAGE_f2fs-tools=y
 CONFIG_PACKAGE_fdisk=y
 CONFIG_PACKAGE_getdns=y
 CONFIG_PACKAGE_git=y
