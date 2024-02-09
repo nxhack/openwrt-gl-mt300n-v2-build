@@ -1,3 +1,12 @@
+diff --git a/package/base-files/files/etc/sysctl.conf b/package/base-files/files/etc/sysctl.conf
+index ae04212f42..24f72ccad1 100644
+--- a/package/base-files/files/etc/sysctl.conf
++++ b/package/base-files/files/etc/sysctl.conf
+@@ -1 +1,4 @@
+ # Defaults are configured in /etc/sysctl.d/* and can be customized in this file
++
++net.core.rmem_max=6291456
++net.ipv4.tcp_rmem='4096 87380 6291456'
 diff --git a/target/linux/mediatek/filogic/config-6.1 b/target/linux/mediatek/filogic/config-6.1
 index 1687aadbc1..b46812db35 100644
 --- a/target/linux/mediatek/filogic/config-6.1
