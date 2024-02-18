@@ -432,6 +432,7 @@ CONFIG_PACKAGE_nspr=y
 CONFIG_PACKAGE_nss-utils=y
 CONFIG_PACKAGE_ntfs-3g=y
 CONFIG_PACKAGE_ntfs-3g-utils=y
+CONFIG_PACKAGE_ntpdate=y
 CONFIG_PACKAGE_openssh-sftp-server=y
 CONFIG_PACKAGE_openssl-util=y
 CONFIG_PACKAGE_openvpn-openssl=y
