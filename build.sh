@@ -76,7 +76,7 @@ git clone --depth 1 https://git.openwrt.org/feed/routing.git
 git clone --depth 1 https://git.openwrt.org/project/luci.git
 ## FIXME: RPC failed; curl 18 transfer closed with outstanding read data remaining
 git clone --depth 1 https://git.openwrt.org/feed/packages.git || true
-sleep 10
+sleep 60
 git clone --depth 1 https://git.openwrt.org/feed/packages.git || true
 cd ..
 ./scripts/feeds update -a
