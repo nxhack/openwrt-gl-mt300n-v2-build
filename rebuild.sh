@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-git pull origin v22.03.0
+git pull origin openwrt-22.03
 ./scripts/feeds update -a
 ./scripts/feeds install -a -f
 
