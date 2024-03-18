@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-git pull
+git pull origin v22.03.0
 ./scripts/feeds update -a
 ./scripts/feeds install -a -f
 
