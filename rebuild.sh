@@ -9,4 +9,4 @@ cp gl-mt300n-v2.diffconfig .config
 #cp gl-ar750s-ext.diffconfig .config
 
 make defconfig
-make
+make -j$[$(nproc)+1]
