@@ -33,7 +33,7 @@ fi
 
 #INIT KERNEL CONFIG
 if [ ! -e '.config' ]; then
-  cp gl-mt300n-v2.config .config
+  cp gl-mt300n-v2.diffconfig .config
   cp .config ./backups/config.${BUILD_DATE}-$$
 fi
 
