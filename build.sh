@@ -71,13 +71,13 @@ fi
 #rm -rf feeds
 mkdir feeds
 cd feeds
+echo "**** FIXME: RPC failed; curl 18 transfer closed with outstanding read data remaining ***"
 git config --global http.postBuffer 524288000
-git config --global http.postBuffer 2M
+git config --global https.postBuffer 524288000
 git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/feed/telephony.git
 git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/feed/routing.git
 git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/project/luci.git
 git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/feed/packages.git || true
-echo "**** FIXME: RPC failed; curl 18 transfer closed with outstanding read data remaining ***"
 #sleep 60
 #git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/feed/packages.git || true
 #echo "**** FIXME: RPC failed; curl 18 transfer closed with outstanding read data remaining ***"
