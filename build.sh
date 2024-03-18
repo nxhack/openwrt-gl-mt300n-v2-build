@@ -74,8 +74,11 @@ cd feeds
 git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/feed/telephony.git
 git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/feed/routing.git
 git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/project/luci.git
-## FIXME: RPC failed; curl 18 transfer closed with outstanding read data remaining
 git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/feed/packages.git || true
+echo "**** FIXME: RPC failed; curl 18 transfer closed with outstanding read data remaining ***"
+sleep 60
+git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/feed/packages.git || true
+echo "**** FIXME: RPC failed; curl 18 transfer closed with outstanding read data remaining ***"
 sleep 60
 git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/feed/packages.git || true
 cd ..
