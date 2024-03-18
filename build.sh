@@ -33,7 +33,7 @@ fi
 
 #INIT KERNEL CONFIG
 if [ ! -e '.config' ]; then
-  cp gl-mt300n-v2.diffconfig .config
+  cp gl-mt300n-v2.config .config
   cp .config ./backups/config.${BUILD_DATE}-$$
 fi
 
@@ -68,7 +68,17 @@ fi
 
 #FEEDS
 ./scripts/feeds uninstall -a
-rm -rf feeds
+#rm -rf feeds
+mkdir feeds
+cd feeds
+git clone --depth 1 https://git.openwrt.org/feed/telephony.git
+git clone --depth 1 https://git.openwrt.org/feed/routing.git
+git clone --depth 1 https://git.openwrt.org/project/luci.git
+## FIXME: RPC failed; curl 18 transfer closed with outstanding read data remaining
+git clone --depth 1 https://git.openwrt.org/feed/packages.git || true
+sleep 10
+git clone --depth 1 https://git.openwrt.org/feed/packages.git || true
+cd ..
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 
