@@ -71,6 +71,8 @@ fi
 #rm -rf feeds
 mkdir feeds
 cd feeds
+git config --global http.postBuffer 524288000
+git config --global http.postBuffer 2M
 git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/feed/telephony.git
 git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/feed/routing.git
 git clone --depth 1 -b openwrt-22.03 https://git.openwrt.org/project/luci.git
