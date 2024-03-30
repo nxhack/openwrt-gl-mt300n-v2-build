@@ -1,5 +1,5 @@
 diff --git a/package/base-files/files/etc/sysctl.conf b/package/base-files/files/etc/sysctl.conf
-index ae04212..6f9465f 100644
+index ae04212f42..6f9465f8e2 100644
 --- a/package/base-files/files/etc/sysctl.conf
 +++ b/package/base-files/files/etc/sysctl.conf
 @@ -1 +1,7 @@
@@ -11,7 +11,7 @@ index ae04212..6f9465f 100644
 +net.core.wmem_default=1027840
 +net.core.wmem_max=1027840
 diff --git a/target/linux/mediatek/filogic/config-6.1 b/target/linux/mediatek/filogic/config-6.1
-index 276c6fe..802f42d 100644
+index 276c6fe6c4..802f42d46b 100644
 --- a/target/linux/mediatek/filogic/config-6.1
 +++ b/target/linux/mediatek/filogic/config-6.1
 @@ -483,3 +483,8 @@ CONFIG_ZONE_DMA32=y
