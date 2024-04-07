@@ -11,7 +11,7 @@ index ae04212f42..6f9465f8e2 100644
 +net.core.wmem_default=1027840
 +net.core.wmem_max=1027840
 diff --git a/package/kernel/mt76/Makefile b/package/kernel/mt76/Makefile
-index 3f48c76faa..861bfc78df 100644
+index 548492e919..7b9c0e0dce 100644
 --- a/package/kernel/mt76/Makefile
 +++ b/package/kernel/mt76/Makefile
 @@ -24,8 +24,7 @@ PKG_CONFIG_DEPENDS += \
