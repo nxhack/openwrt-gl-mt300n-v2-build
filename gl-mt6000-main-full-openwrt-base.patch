@@ -38,10 +38,10 @@ index 548492e919..7b9c0e0dce 100644
  ifdef CONFIG_PACKAGE_kmod-mt76-usb
    PKG_MAKE_FLAGS += CONFIG_MT76_USB=m
 diff --git a/target/linux/mediatek/filogic/config-6.1 b/target/linux/mediatek/filogic/config-6.1
-index 276c6fe6c4..28bcd6851f 100644
+index 663bb054a2..f67f3db68e 100644
 --- a/target/linux/mediatek/filogic/config-6.1
 +++ b/target/linux/mediatek/filogic/config-6.1
-@@ -483,3 +483,16 @@ CONFIG_ZONE_DMA32=y
+@@ -484,3 +484,16 @@ CONFIG_ZONE_DMA32=y
  CONFIG_ZSTD_COMMON=y
  CONFIG_ZSTD_COMPRESS=y
  CONFIG_ZSTD_DECOMPRESS=y
