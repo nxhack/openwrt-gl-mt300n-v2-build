@@ -10,33 +10,6 @@ index ae04212f42..6f9465f8e2 100644
 +net.ipv4.tcp_rmem=4096 131072 6291456
 +net.core.wmem_default=1027840
 +net.core.wmem_max=1027840
-diff --git a/package/kernel/mt76/Makefile b/package/kernel/mt76/Makefile
-index 548492e919..7b9c0e0dce 100644
---- a/package/kernel/mt76/Makefile
-+++ b/package/kernel/mt76/Makefile
-@@ -24,8 +24,7 @@ PKG_CONFIG_DEPENDS += \
- 	CONFIG_PACKAGE_kmod-mt76x2-common \
- 	CONFIG_PACKAGE_kmod-mt76x2 \
- 	CONFIG_PACKAGE_kmod-mt76x2u \
--	CONFIG_PACKAGE_kmod-mt7603 \
--	CONFIG_PACKAGE_CFG80211_TESTMODE
-+	CONFIG_PACKAGE_kmod-mt7603
- 
- STAMP_CONFIGURED_DEPENDS := $(STAGING_DIR)/usr/include/mac80211-backport/backport/autoconf.h
- 
-@@ -376,10 +375,8 @@ ifdef CONFIG_PACKAGE_MAC80211_MESH
-   NOSTDINC_FLAGS += -DCONFIG_MAC80211_MESH
- endif
- 
--ifdef CONFIG_PACKAGE_CFG80211_TESTMODE
--  NOSTDINC_FLAGS += -DCONFIG_NL80211_TESTMODE
--  PKG_MAKE_FLAGS += CONFIG_NL80211_TESTMODE=y
--endif
-+NOSTDINC_FLAGS += -DCONFIG_NL80211_TESTMODE
-+PKG_MAKE_FLAGS += CONFIG_NL80211_TESTMODE=y
- 
- ifdef CONFIG_PACKAGE_kmod-mt76-usb
-   PKG_MAKE_FLAGS += CONFIG_MT76_USB=m
 diff --git a/target/linux/mediatek/filogic/config-6.1 b/target/linux/mediatek/filogic/config-6.1
 index 663bb054a2..f67f3db68e 100644
 --- a/target/linux/mediatek/filogic/config-6.1
