@@ -1,7 +1,25 @@
 diff --git a/net/samba4/Makefile b/net/samba4/Makefile
-index 4afa874..87a3894 100644
+index 4afa87463..6569be058 100644
 --- a/net/samba4/Makefile
 +++ b/net/samba4/Makefile
+@@ -2,7 +2,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=samba
+-PKG_VERSION:=4.18.8
++PKG_VERSION:=4.20.2
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+@@ -13,7 +13,7 @@ PKG_SOURCE_URL:= \
+ 		http://www.nic.funet.fi/index/samba/pub/samba/stable/ \
+ 		http://samba.mirror.bit.nl/samba/ftp/stable/ \
+ 		https://download.samba.org/pub/samba/stable/
+-PKG_HASH:=4fb87bceaeb01d832a59046c197a044b7e8e8000581548b5d577a6cda03344d1
++PKG_HASH:=f969ffed58ccf3e85cbbcc0e33a1726d025c2b40f42a653b1125b82b92d2e0e5
+ 
+ PKG_BUILD_FLAGS:=gc-sections
+ 
 @@ -39,6 +39,7 @@ PKG_CONFIG_DEPENDS:= \
  PYTHON3_PKG_BUILD:=0
  
@@ -39,3 +57,156 @@ index 4afa874..87a3894 100644
  		--without-lttng \
  		--without-pam \
  		--without-systemd \
+@@ -217,14 +220,6 @@ HOST_CONFIGURE_ARGS += --disable-avahi --without-quotas --without-acl-support --
+ 	--without-ad-dc --without-json --without-libarchive --disable-python --nopyc --nopyo \
+ 	--without-ads --without-ldap --without-ldb-lmdb
+ 
+-# Optional AES-NI support - https://lists.samba.org/archive/samba-technical/2017-September/122738.html
+-# Support for Nettle wasn't comitted
+-ifdef CONFIG_TARGET_x86_64
+-	CONFIGURE_ARGS += --accel-aes=intelaesni
+-else
+-	CONFIGURE_ARGS += --accel-aes=none
+-endif
+-
+ CONFIGURE_ARGS += \
+ 		--with-lockdir=/var/lock \
+ 		--with-logfilebase=/var/log \
+diff --git a/net/samba4/patches/021-source4-msgsock-nvram-fix.patch b/net/samba4/patches/021-source4-msgsock-nvram-fix.patch
+index 2bd1e79c6..7f7199e0c 100644
+--- a/net/samba4/patches/021-source4-msgsock-nvram-fix.patch
++++ b/net/samba4/patches/021-source4-msgsock-nvram-fix.patch
+@@ -1,6 +1,6 @@
+ --- a/source4/lib/messaging/messaging.c
+ +++ b/source4/lib/messaging/messaging.c
+-@@ -526,7 +526,7 @@ static struct imessaging_context *imessa
++@@ -528,7 +528,7 @@ static struct imessaging_context *imessa
+  		goto fail;
+  	}
+  
+diff --git a/net/samba4/patches/101-do-not-check-xsltproc-manpages.patch b/net/samba4/patches/101-do-not-check-xsltproc-manpages.patch
+index abce345d8..39bbb77b7 100644
+--- a/net/samba4/patches/101-do-not-check-xsltproc-manpages.patch
++++ b/net/samba4/patches/101-do-not-check-xsltproc-manpages.patch
+@@ -4,7 +4,7 @@ Signed-off-by: Bian Naimeng <biannm@cn.fujitsu.com>
+ 
+ --- a/lib/ldb/wscript
+ +++ b/lib/ldb/wscript
+-@@ -144,7 +144,7 @@ def configure(conf):
++@@ -143,7 +143,7 @@ def configure(conf):
+          conf.DEFINE('EXPECTED_SYSTEM_LDB_VERSION_RELEASE', int(v[2]))
+  
+      if conf.env.standalone_ldb:
+diff --git a/net/samba4/patches/102-samba-4.11-unbundle-libbsd.patch b/net/samba4/patches/102-samba-4.11-unbundle-libbsd.patch
+index 766fefc52..962d004de 100644
+--- a/net/samba4/patches/102-samba-4.11-unbundle-libbsd.patch
++++ b/net/samba4/patches/102-samba-4.11-unbundle-libbsd.patch
+@@ -1,21 +1,27 @@
+ --- a/lib/replace/wscript
+ +++ b/lib/replace/wscript
+-@@ -434,22 +434,13 @@ def configure(conf):
++@@ -441,33 +441,12 @@ def configure(conf):
+  
+      conf.CHECK_FUNCS('prctl dirname basename')
+  
+ -    strlcpy_in_bsd = False
+-+    # Not checking for libbsd
+-+    conf.CHECK_FUNCS('strlcpy strlcat')
+-+    conf.CHECK_FUNCS('getpeereid')
+-+    conf.CHECK_FUNCS_IN('setproctitle', 'setproctitle', headers='setproctitle.h')
+-+    conf.CHECK_FUNCS('setproctitle_init')
+- 
++-
+ -    # libbsd on some platforms provides strlcpy and strlcat
+ -    if not conf.CHECK_FUNCS('strlcpy strlcat'):
+ -        if conf.CHECK_FUNCS_IN('strlcpy strlcat', 'bsd', headers='bsd/string.h',
+ -                               checklibc=True):
+ -            strlcpy_in_bsd = True
++-    elif conf.env.enable_fuzzing:
++-        # Just to complicate it more, some versions of Honggfuzz have
++-        # got strlcpy and strlcat in libc, but not in <string.h>
++-        # (unless it is there coincidentally, on a BSD). Therefore we
++-        # can't use CHECK_FUNCS alone to decide whether to add the
++-        # headers to replace.h.
++-        #
++-        # As this is only known to happen on a fuzzing compiler, we'll
++-        # skip the check when not in fuzzing mode.
++-        conf.CHECK_HEADERS('bsd/string.h')
++-
+ -    if not conf.CHECK_FUNCS('getpeereid'):
+ -        conf.CHECK_FUNCS_IN('getpeereid', 'bsd', headers='sys/types.h bsd/unistd.h')
+ -    if not conf.CHECK_FUNCS_IN('setproctitle', 'setproctitle', headers='setproctitle.h'):
+@@ -25,11 +31,16 @@
+ -
+ -    if not conf.CHECK_FUNCS('closefrom'):
+ -        conf.CHECK_FUNCS_IN('closefrom', 'bsd', headers='bsd/unistd.h')
+++    # Not checking for libbsd
+++    conf.CHECK_FUNCS('strlcpy strlcat')
+++    conf.CHECK_FUNCS('getpeereid')
+++    conf.CHECK_FUNCS_IN('setproctitle', 'setproctitle', headers='setproctitle.h')
+++    conf.CHECK_FUNCS('setproctitle_init')
+ +    conf.CHECK_FUNCS('closefrom')
+  
+      conf.CHECK_CODE('''
+                  struct ucred cred;
+-@@ -832,9 +823,6 @@ syscall(SYS_copy_file_range,0,NULL,0,NUL
++@@ -850,9 +829,6 @@ syscall(SYS_copy_file_range,0,NULL,0,NUL
+  
+      # look for a method of finding the list of network interfaces
+      for method in ['HAVE_IFACE_GETIFADDRS', 'HAVE_IFACE_AIX', 'HAVE_IFACE_IFCONF', 'HAVE_IFACE_IFREQ']:
+@@ -39,7 +50,7 @@
+          if conf.CHECK_CODE('''
+                             #define %s 1
+                             #define NO_CONFIG_H 1
+-@@ -847,7 +835,7 @@ syscall(SYS_copy_file_range,0,NULL,0,NUL
++@@ -865,7 +841,7 @@ syscall(SYS_copy_file_range,0,NULL,0,NUL
+                             #include "tests/getifaddrs.c"
+                             ''' % method,
+                             method,
+@@ -48,7 +59,7 @@
+                             addmain=False,
+                             execute=True):
+              break
+-@@ -895,7 +883,6 @@ def build(bld):
++@@ -913,7 +889,6 @@ def build(bld):
+                  break
+  
+      extra_libs = ''
+diff --git a/net/samba4/patches/105-perl-json-pp.patch b/net/samba4/patches/105-perl-json-pp.patch
+deleted file mode 100644
+index feb8aaaf4..000000000
+--- a/net/samba4/patches/105-perl-json-pp.patch
++++ /dev/null
+@@ -1,20 +0,0 @@
+---- a/third_party/heimdal/cf/make-proto.pl
+-+++ b/third_party/heimdal/cf/make-proto.pl
+-@@ -4,7 +4,7 @@
+- use Getopt::Std;
+- use File::Compare;
+- 
+--use JSON;
+-+use JSON::PP;
+- 
+- my $comment = 0;
+- my $doxygen = 0;
+-@@ -70,7 +70,7 @@ if($opt_x) {
+-     my $EXP;
+-     local $/;
+-     open(EXP, '<', $opt_x) || die "open ${opt_x}";
+--    my $obj = JSON->new->utf8->decode(<EXP>);
+-+    my $obj = JSON::PP->new->utf8->decode(<EXP>);
+-     close $EXP;
+- 
+-     foreach my $x (keys %$obj) {
+diff --git a/net/samba4/waf-cross-answers/aarch64.txt b/net/samba4/waf-cross-answers/aarch64.txt
+index 0714416f8..bb0eb6d46 100644
+--- a/net/samba4/waf-cross-answers/aarch64.txt
++++ b/net/samba4/waf-cross-answers/aarch64.txt
+@@ -37,4 +37,5 @@ Checking whether the realpath function allows a NULL argument: OK
+ Checking for ftruncate extend: OK
+ getcwd takes a NULL argument: OK
+ Checking for readlink breakage: OK
+-Checking for gnutls fips mode support: NO
+\ No newline at end of file
++Checking for gnutls fips mode support: NO
++Checking whether fcntl supports setting/getting hints: NO
