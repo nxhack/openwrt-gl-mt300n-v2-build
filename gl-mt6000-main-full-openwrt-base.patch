@@ -10,59 +10,26 @@ index ae04212f42..6f9465f8e2 100644
 +net.ipv4.tcp_rmem=4096 131072 6291456
 +net.core.wmem_default=1027840
 +net.core.wmem_max=1027840
-diff --git a/package/kernel/mac80211/Makefile b/package/kernel/mac80211/Makefile
-index 79ef87b998..35ef1b3d40 100644
---- a/package/kernel/mac80211/Makefile
-+++ b/package/kernel/mac80211/Makefile
-@@ -32,7 +32,6 @@ PKG_DRIVERS = \
- 
- PKG_CONFIG_DEPENDS:= \
- 	CONFIG_PACKAGE_kmod-mac80211 \
--	CONFIG_PACKAGE_CFG80211_TESTMODE \
- 	CONFIG_PACKAGE_MAC80211_DEBUGFS \
- 	CONFIG_PACKAGE_MAC80211_MESH \
- 	CONFIG_PACKAGE_MAC80211_TRACING \
-@@ -60,6 +59,7 @@ mac80211_variant_check=$(if $(ALL_VARIANTS),$(filter $(BUILD_VARIANT),$(if $(1),
- 
- config-y:= \
- 	WLAN \
-+	NL80211_TESTMODE \
- 	CFG80211_CERTIFICATION_ONUS \
- 	MAC80211_RC_MINSTREL \
- 	MAC80211_RC_MINSTREL_HT \
-@@ -82,7 +82,6 @@ config-y:= \
- 	WLAN_VENDOR_ZYDAS \
- 
- config-$(call config_package,cfg80211,$(ALL_VARIANTS)) += CFG80211
--config-$(CONFIG_PACKAGE_CFG80211_TESTMODE) += NL80211_TESTMODE
- 
- config-$(call config_package,mac80211,$(ALL_VARIANTS)) += MAC80211
- config-$(CONFIG_PACKAGE_MAC80211_MESH) += MAC80211_MESH
-@@ -111,20 +110,6 @@ define KernelPackage/cfg80211/description
- cfg80211 is the Linux wireless LAN (802.11) configuration API.
- endef
- 
--define KernelPackage/cfg80211/config
--  if PACKAGE_kmod-cfg80211
--
--	config PACKAGE_CFG80211_TESTMODE
--		bool "Enable testmode command support"
--		default n
--		help
--		  This is typically used for tests and calibration during
--		  manufacturing, or vendor specific debugging features
--
--  endif
--endef
--
--
- define KernelPackage/mac80211
-   $(call KernelPackage/mac80211/Default)
-   TITLE:=Linux 802.11 Wireless Networking Stack
 diff --git a/package/kernel/mt76/Makefile b/package/kernel/mt76/Makefile
-index c6cce9cf9c..d09660f013 100644
+index f71070dbb9..5e65312578 100644
 --- a/package/kernel/mt76/Makefile
 +++ b/package/kernel/mt76/Makefile
+@@ -6,11 +6,11 @@ PKG_RELEASE=1
+ PKG_LICENSE:=GPLv2
+ PKG_LICENSE_FILES:=
+ 
+-PKG_SOURCE_URL:=https://github.com/openwrt/mt76
++PKG_SOURCE_URL:=https://github.com/pesa1234/mt76
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_DATE:=2024-07-13
+-PKG_SOURCE_VERSION:=3b47d9df427c4833605a172f2a8f0e0012b04c80
+-PKG_MIRROR_HASH:=23c3aaa53fb2e088446eb18148a44d3edcd3a0eda1ee41cf5cbf56064ebbee58
++PKG_SOURCE_DATE:=2024-07-17
++PKG_SOURCE_VERSION:=590afc85ee598c3051ba93a5857dad9c2d89fef8
++PKG_MIRROR_HASH:=c17970aeb8f474b482515c2b5981171b3bf36d044afd2f4fd3dc85f8788a47c5
+ 
+ PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
+ PKG_USE_NINJA:=0
 @@ -24,8 +24,7 @@ PKG_CONFIG_DEPENDS += \
  	CONFIG_PACKAGE_kmod-mt76x2-common \
  	CONFIG_PACKAGE_kmod-mt76x2 \
@@ -101,19 +68,113 @@ index c6cce9cf9c..d09660f013 100644
  		$(PKG_MAKE_FLAGS) \
  		M="$(PKG_BUILD_DIR)" \
  		NOSTDINC_FLAGS="$(NOSTDINC_FLAGS)" \
+diff --git a/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh b/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh
+index 0079c498e7..c9133f0aac 100755
+--- a/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh
++++ b/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh
+@@ -55,7 +55,10 @@ drv_mac80211_init_device_config() {
+ 		he_spr_sr_control \
+ 		he_spr_psr_enabled \
+ 		he_bss_color_enabled \
+-		he_twt_required
++		he_twt_required \
++		he_twt_responder \
++		etxbfen \
++		itxbfen
+ 	config_add_int \
+ 		beamformer_antennas \
+ 		beamformee_antennas \
+@@ -142,7 +145,8 @@ mac80211_hostapd_setup_base() {
+ 	[ -n "$acs_exclude_dfs" ] && [ "$acs_exclude_dfs" -gt 0 ] &&
+ 		append base_cfg "acs_exclude_dfs=1" "$N"
+ 
+-	json_get_vars noscan ht_coex min_tx_power:0 tx_burst
++	json_get_vars noscan ht_coex vendor_vht min_tx_power:0 tx_burst
++	json_get_vars etxbfen:1 itxbfen
+ 	json_get_values ht_capab_list ht_capab
+ 	json_get_values channel_list channels
+ 
+@@ -296,7 +300,7 @@ mac80211_hostapd_setup_base() {
+ 	}
+ 	[ "$hwmode" = "a" ] || enable_ac=0
+ 
+-	if [ "$enable_ac" != "0" ]; then
++	if [ "$enable_ac" != "0" -o "$vendor_vht" = "1" ]; then
+ 		json_get_vars \
+ 			rxldpc:1 \
+ 			short_gi_80:1 \
+@@ -332,6 +336,12 @@ mac80211_hostapd_setup_base() {
+ 		[ "$rx_stbc" -lt "$cap_rx_stbc" ] && cap_rx_stbc="$rx_stbc"
+ 		vht_cap="$(( ($vht_cap & ~(0x700)) | ($cap_rx_stbc << 8) ))"
+ 
++		[ "$etxbfen" -eq 0 ] && {
++			su_beamformer=0
++			su_beamformee=0
++			mu_beamformer=0
++		}
++
+ 		[ "$vht_oper_chwidth" -lt 2 ] && {
+ 			vht160=0
+ 			short_gi_160=0
+@@ -427,6 +437,7 @@ mac80211_hostapd_setup_base() {
+ 			he_su_beamformee:1 \
+ 			he_mu_beamformer:1 \
+ 			he_twt_required:0 \
++			he_twt_responder:0 \
+ 			he_spr_sr_control:3 \
+ 			he_spr_psr_enabled:0 \
+ 			he_spr_non_srg_obss_pd_max_offset:0 \
+@@ -443,6 +454,11 @@ mac80211_hostapd_setup_base() {
+ 			append base_cfg "he_oper_chwidth=$vht_oper_chwidth" "$N"
+ 			append base_cfg "he_oper_centr_freq_seg0_idx=$vht_center_seg0" "$N"
+ 		}
++		
++		[ "$etxbfen" -eq 0 ] && {
++			he_su_beamformer=0
++			he_mu_beamformer=0
++		}
+ 
+ 		mac80211_add_he_capabilities \
+ 			he_su_beamformer:${he_phy_cap:6:2}:0x80:$he_su_beamformer \
+@@ -450,6 +466,13 @@ mac80211_hostapd_setup_base() {
+ 			he_mu_beamformer:${he_phy_cap:8:2}:0x2:$he_mu_beamformer \
+ 			he_spr_psr_enabled:${he_phy_cap:14:2}:0x1:$he_spr_psr_enabled \
+ 			he_twt_required:${he_mac_cap:0:2}:0x6:$he_twt_required
++		
++		if [ -n "$he_twt_responder" ]; then
++			append base_cfg "he_twt_responder=$he_twt_responder" "$N"
++		else
++			he_twt_responder=0
++			append base_cfg "he_twt_responder=$he_twt_responder" "$N"
++		fi
+ 
+ 		if [ "$he_bss_color_enabled" -gt 0 ]; then
+ 			append base_cfg "he_bss_color=$he_bss_color" "$N"
+@@ -491,6 +514,8 @@ mac80211_hostapd_setup_base() {
+ 		append base_cfg "he_mu_edca_ac_vo_ecwmax=7" "$N"
+ 		append base_cfg "he_mu_edca_ac_vo_timer=255" "$N"
+ 	fi
++	
++	set_default tx_burst 2
+ 
+ 	hostapd_prepare_device_config "$hostapd_conf_file" nl80211
+ 	cat >> "$hostapd_conf_file" <<EOF
+@@ -498,6 +523,7 @@ ${channel:+channel=$channel}
+ ${channel_list:+chanlist=$channel_list}
+ ${hostapd_noscan:+noscan=1}
+ ${tx_burst:+tx_queue_data2_burst=$tx_burst}
++${itxbfen:+ibf_enable=$itxbfen}
+ ${multiple_bssid:+mbssid=$multiple_bssid}
+ #num_global_macaddr=$num_global_macaddr
+ $base_cfg
 diff --git a/target/linux/mediatek/filogic/config-6.6 b/target/linux/mediatek/filogic/config-6.6
-index 6d9d42853b..d6a9f44955 100644
+index 6d9d42853b..77b8306a93 100644
 --- a/target/linux/mediatek/filogic/config-6.6
 +++ b/target/linux/mediatek/filogic/config-6.6
-@@ -501,3 +501,16 @@ CONFIG_ZONE_DMA32=y
+@@ -501,3 +501,11 @@ CONFIG_ZONE_DMA32=y
  CONFIG_ZSTD_COMMON=y
  CONFIG_ZSTD_COMPRESS=y
  CONFIG_ZSTD_DECOMPRESS=y
-+CONFIG_MPTCP=y
-+CONFIG_MPTCP_IPV6=y
-+CONFIG_BRIDGE_NETFILTER=y
-+CONFIG_NETFILTER_ADVANCED=y
-+CONFIG_SKB_EXTENSIONS=y
 +CONFIG_DEFAULT_MMAP_MIN_ADDR=32768
 +CONFIG_ARM64_BTI=y
 +CONFIG_ARM64_PTR_AUTH=y

@@ -11,10 +11,10 @@ index ae04212f42..6f9465f8e2 100644
 +net.core.wmem_default=1027840
 +net.core.wmem_max=1027840
 diff --git a/target/linux/mediatek/filogic/config-6.6 b/target/linux/mediatek/filogic/config-6.6
-index 6d9d42853b..3d3b64a911 100644
+index 6d9d42853b..77b8306a93 100644
 --- a/target/linux/mediatek/filogic/config-6.6
 +++ b/target/linux/mediatek/filogic/config-6.6
-@@ -501,3 +501,8 @@ CONFIG_ZONE_DMA32=y
+@@ -501,3 +501,11 @@ CONFIG_ZONE_DMA32=y
  CONFIG_ZSTD_COMMON=y
  CONFIG_ZSTD_COMPRESS=y
  CONFIG_ZSTD_DECOMPRESS=y
@@ -23,3 +23,6 @@ index 6d9d42853b..3d3b64a911 100644
 +CONFIG_ARM64_PTR_AUTH=y
 +CONFIG_ARM64_PTR_AUTH_KERNEL=y
 +CONFIG_UNMAP_KERNEL_AT_EL0=y
++CONFIG_BLK_WBT=y
++CONFIG_BLK_WBT_MQ=y
++CONFIG_MQ_IOSCHED_DEADLINE=y
