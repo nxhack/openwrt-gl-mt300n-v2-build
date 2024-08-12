@@ -4004,7 +4004,7 @@ index e64ca1753b..35fa961d21 100644
   		sband = local->hw.wiphy->bands[band];
   
 diff --git a/package/kernel/mt76/Makefile b/package/kernel/mt76/Makefile
-index f71070dbb9..592d98ce3f 100644
+index f71070dbb9..8ebc55fd34 100644
 --- a/package/kernel/mt76/Makefile
 +++ b/package/kernel/mt76/Makefile
 @@ -6,11 +6,11 @@ PKG_RELEASE=1
@@ -4017,9 +4017,9 @@ index f71070dbb9..592d98ce3f 100644
 -PKG_SOURCE_DATE:=2024-07-13
 -PKG_SOURCE_VERSION:=3b47d9df427c4833605a172f2a8f0e0012b04c80
 -PKG_MIRROR_HASH:=23c3aaa53fb2e088446eb18148a44d3edcd3a0eda1ee41cf5cbf56064ebbee58
-+PKG_SOURCE_DATE:=2024-05-22
-+PKG_SOURCE_VERSION:=a68c3c0c3da04516abb766f10fe47e49aadd2a1c
-+PKG_MIRROR_HASH:=b135302f5bc177ed0f6d033eadf36bae7ff5c84ca1bbb8a096ade519fa95ce9a
++PKG_SOURCE_DATE:=2024-08-11
++PKG_SOURCE_VERSION:=c6388aa1e8b8183a29359b4074bcdd64d409fc8d
++PKG_MIRROR_HASH:=75286ca63f474aab65980c52890e3e43c3bceba52d3cefdd8584855320e1da60
  
  PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
  PKG_USE_NINJA:=0
