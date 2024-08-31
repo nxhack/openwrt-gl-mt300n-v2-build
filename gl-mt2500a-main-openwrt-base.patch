@@ -1,3 +1,16 @@
+diff --git a/include/autotools.mk b/include/autotools.mk
+index 7fc6f37175..d0e4b3642f 100644
+--- a/include/autotools.mk
++++ b/include/autotools.mk
+@@ -44,7 +44,7 @@ define autoreconf
+ 				touch NEWS AUTHORS COPYING ABOUT-NLS ChangeLog; \
+ 				$(AM_TOOL_PATHS) \
+ 					LIBTOOLIZE='$(STAGING_DIR_HOST)/bin/libtoolize --install' \
+-					$(STAGING_DIR_HOST)/bin/autoreconf -v -f -i \
++					$(STAGING_DIR_HOST)/bin/autoreconf -v -f -i -s \
+ 					$(if $(word 2,$(3)),--no-recursive) \
+ 					-B $(STAGING_DIR_HOST)/share/aclocal \
+ 					$(patsubst %,-I %,$(5)) \
 diff --git a/package/base-files/files/etc/sysctl.conf b/package/base-files/files/etc/sysctl.conf
 index ae04212f42..6f9465f8e2 100644
 --- a/package/base-files/files/etc/sysctl.conf

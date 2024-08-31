@@ -1,3 +1,16 @@
+diff --git a/include/autotools.mk b/include/autotools.mk
+index 7fc6f37175..d0e4b3642f 100644
+--- a/include/autotools.mk
++++ b/include/autotools.mk
+@@ -44,7 +44,7 @@ define autoreconf
+ 				touch NEWS AUTHORS COPYING ABOUT-NLS ChangeLog; \
+ 				$(AM_TOOL_PATHS) \
+ 					LIBTOOLIZE='$(STAGING_DIR_HOST)/bin/libtoolize --install' \
+-					$(STAGING_DIR_HOST)/bin/autoreconf -v -f -i \
++					$(STAGING_DIR_HOST)/bin/autoreconf -v -f -i -s \
+ 					$(if $(word 2,$(3)),--no-recursive) \
+ 					-B $(STAGING_DIR_HOST)/share/aclocal \
+ 					$(patsubst %,-I %,$(5)) \
 diff --git a/package/base-files/files/etc/sysctl.conf b/package/base-files/files/etc/sysctl.conf
 index ae04212f42..6f9465f8e2 100644
 --- a/package/base-files/files/etc/sysctl.conf
@@ -10,161 +23,38 @@ index ae04212f42..6f9465f8e2 100644
 +net.ipv4.tcp_rmem=4096 131072 6291456
 +net.core.wmem_default=1027840
 +net.core.wmem_max=1027840
-diff --git a/package/kernel/mac80211/patches/subsys/330-mac80211-add-AQL-support-for-broadcast-packets.patch b/package/kernel/mac80211/patches/subsys/330-mac80211-add-AQL-support-for-broadcast-packets.patch
-index d822e45357..c55fd3a939 100644
---- a/package/kernel/mac80211/patches/subsys/330-mac80211-add-AQL-support-for-broadcast-packets.patch
-+++ b/package/kernel/mac80211/patches/subsys/330-mac80211-add-AQL-support-for-broadcast-packets.patch
-@@ -12,7 +12,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
+diff --git a/package/firmware/linux-firmware/Makefile b/package/firmware/linux-firmware/Makefile
+index f256a1efe4..4bf71b6d65 100644
+--- a/package/firmware/linux-firmware/Makefile
++++ b/package/firmware/linux-firmware/Makefile
+@@ -8,12 +8,14 @@
+ include $(TOPDIR)/rules.mk
  
- --- a/include/net/cfg80211.h
- +++ b/include/net/cfg80211.h
--@@ -3416,6 +3416,7 @@ enum wiphy_params_flags {
-+@@ -3418,6 +3418,7 @@ enum wiphy_params_flags {
-  /* The per TXQ device queue limit in airtime */
-  #define IEEE80211_DEFAULT_AQL_TXQ_LIMIT_L	5000
-  #define IEEE80211_DEFAULT_AQL_TXQ_LIMIT_H	12000
-diff --git a/package/kernel/mac80211/patches/subsys/341-wifi-cfg80211-add-support-for-advertising-multiple-r.patch b/package/kernel/mac80211/patches/subsys/341-wifi-cfg80211-add-support-for-advertising-multiple-r.patch
-index 45349891b6..f3377e786b 100644
---- a/package/kernel/mac80211/patches/subsys/341-wifi-cfg80211-add-support-for-advertising-multiple-r.patch
-+++ b/package/kernel/mac80211/patches/subsys/341-wifi-cfg80211-add-support-for-advertising-multiple-r.patch
-@@ -20,7 +20,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
+ PKG_NAME:=linux-firmware
+-PKG_VERSION:=20240513
++PKG_VERSION:=20240825
+ PKG_RELEASE:=1
  
- --- a/include/net/cfg80211.h
- +++ b/include/net/cfg80211.h
--@@ -5045,7 +5045,9 @@ struct ieee80211_iface_limit {
-+@@ -5047,7 +5047,9 @@ struct ieee80211_iface_limit {
-   * struct ieee80211_iface_combination - possible interface combination
-   *
-   * With this structure the driver can describe which interface
-@@ -31,7 +31,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-   *
-   * Examples:
-   *
--@@ -5403,6 +5405,38 @@ struct wiphy_iftype_akm_suites {
-+@@ -5405,6 +5407,38 @@ struct wiphy_iftype_akm_suites {
-  	int n_akm_suites;
-  };
-  
-@@ -70,7 +70,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-  #define CFG80211_HW_TIMESTAMP_ALL_PEERS	0xffff
-  
-  /**
--@@ -5621,6 +5655,9 @@ struct wiphy_iftype_akm_suites {
-+@@ -5623,6 +5657,9 @@ struct wiphy_iftype_akm_suites {
-   *	A value of %CFG80211_HW_TIMESTAMP_ALL_PEERS indicates the driver
-   *	supports enabling HW timestamping for all peers (i.e. no need to
-   *	specify a mac address).
-@@ -80,7 +80,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-   */
-  struct wiphy {
-  	struct mutex mtx;
--@@ -5771,6 +5808,9 @@ struct wiphy {
-+@@ -5773,6 +5810,9 @@ struct wiphy {
-  
-  	u16 hw_timestamp_max_peers;
-  
-diff --git a/package/kernel/mac80211/patches/subsys/342-wifi-cfg80211-extend-interface-combination-check-for.patch b/package/kernel/mac80211/patches/subsys/342-wifi-cfg80211-extend-interface-combination-check-for.patch
-index 0ba97a2c0f..f58c7c36cc 100644
---- a/package/kernel/mac80211/patches/subsys/342-wifi-cfg80211-extend-interface-combination-check-for.patch
-+++ b/package/kernel/mac80211/patches/subsys/342-wifi-cfg80211-extend-interface-combination-check-for.patch
-@@ -11,7 +11,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
+-PKG_SOURCE_URL:=@KERNEL/linux/kernel/firmware
+-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+-PKG_HASH:=9f05edb99668135d37cedc4fdd18aac2802dc9e4566e086e6c6c2e321f3ecc4e
++PKG_SOURCE_URL:=https://github.com/pesa1234/linux-firmware-r.next
++PKG_SOURCE_PROTO:=git
++PKG_SOURCE_DATE:=2024-08-25
++PKG_SOURCE_VERSION:=f02cce135268a1741b610e9c243f8d0b53e9f4e2
++PKG_MIRROR_HASH:=5d91238db9ac6a16e4df28771353c7da81a0d957fe1fc88f1ede86dcdfecc911
  
- --- a/include/net/cfg80211.h
- +++ b/include/net/cfg80211.h
--@@ -1598,6 +1598,7 @@ struct cfg80211_color_change_settings {
-+@@ -1600,6 +1600,7 @@ struct cfg80211_color_change_settings {
-   *
-   * Used to pass interface combination parameters
-   *
-@@ -19,7 +19,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-   * @num_different_channels: the number of different channels we want
-   *	to use for verification
-   * @radar_detect: a bitmap where each bit corresponds to a channel
--@@ -1611,6 +1612,7 @@ struct cfg80211_color_change_settings {
-+@@ -1613,6 +1614,7 @@ struct cfg80211_color_change_settings {
-   *	the verification
-   */
-  struct iface_combination_params {
-@@ -27,7 +27,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-  	int num_different_channels;
-  	u8 radar_detect;
-  	int iftype_num[NUM_NL80211_IFTYPES];
--@@ -4579,6 +4581,8 @@ struct mgmt_frame_regs {
-+@@ -4581,6 +4583,8 @@ struct mgmt_frame_regs {
-   *
-   * @set_hw_timestamp: Enable/disable HW timestamping of TM/FTM frames.
-   * @set_ttlm: set the TID to link mapping.
-@@ -36,7 +36,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-   */
-  struct cfg80211_ops {
-  	int	(*suspend)(struct wiphy *wiphy, struct cfg80211_wowlan *wow);
--@@ -4940,6 +4944,7 @@ struct cfg80211_ops {
-+@@ -4942,6 +4946,7 @@ struct cfg80211_ops {
-  				    struct cfg80211_set_hw_timestamp *hwts);
-  	int	(*set_ttlm)(struct wiphy *wiphy, struct net_device *dev,
-  			    struct cfg80211_ttlm_params *params);
-@@ -46,7 +46,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-  /*
- --- a/net/mac80211/util.c
- +++ b/net/mac80211/util.c
--@@ -3930,6 +3930,7 @@ int ieee80211_check_combinations(struct
-+@@ -3934,6 +3934,7 @@ int ieee80211_check_combinations(struct
-  	int total = 1;
-  	struct iface_combination_params params = {
-  		.radar_detect = radar_detect,
-@@ -54,7 +54,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-  	};
-  
-  	lockdep_assert_wiphy(local->hw.wiphy);
--@@ -4020,7 +4021,9 @@ int ieee80211_max_num_channels(struct ie
-+@@ -4024,7 +4025,9 @@ int ieee80211_max_num_channels(struct ie
-  	struct ieee80211_chanctx *ctx;
-  	u32 max_num_different_channels = 1;
-  	int err;
-diff --git a/package/kernel/mac80211/patches/subsys/343-wifi-cfg80211-add-helper-for-checking-if-a-chandef-i.patch b/package/kernel/mac80211/patches/subsys/343-wifi-cfg80211-add-helper-for-checking-if-a-chandef-i.patch
-index d115dd2e54..cff76aaf29 100644
---- a/package/kernel/mac80211/patches/subsys/343-wifi-cfg80211-add-helper-for-checking-if-a-chandef-i.patch
-+++ b/package/kernel/mac80211/patches/subsys/343-wifi-cfg80211-add-helper-for-checking-if-a-chandef-i.patch
-@@ -10,7 +10,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
+ PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
  
- --- a/include/net/cfg80211.h
- +++ b/include/net/cfg80211.h
--@@ -6485,6 +6485,15 @@ static inline bool cfg80211_channel_is_p
-+@@ -6487,6 +6487,15 @@ static inline bool cfg80211_channel_is_p
-  }
-  
-  /**
-diff --git a/package/kernel/mac80211/patches/subsys/346-wifi-mac80211-extend-ifcomb-check-functions-for-mult.patch b/package/kernel/mac80211/patches/subsys/346-wifi-mac80211-extend-ifcomb-check-functions-for-mult.patch
-index 168cf6fad0..2ac00efa84 100644
---- a/package/kernel/mac80211/patches/subsys/346-wifi-mac80211-extend-ifcomb-check-functions-for-mult.patch
-+++ b/package/kernel/mac80211/patches/subsys/346-wifi-mac80211-extend-ifcomb-check-functions-for-mult.patch
-@@ -136,7 +136,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-  static int ieee80211_check_queues(struct ieee80211_sub_if_data *sdata,
- --- a/net/mac80211/util.c
- +++ b/net/mac80211/util.c
--@@ -3918,20 +3918,103 @@ static u8 ieee80211_chanctx_radar_detect
-+@@ -3922,20 +3922,103 @@ static u8 ieee80211_chanctx_radar_detect
-  	return radar_detect;
-  }
-  
-@@ -245,7 +245,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-  
-  	lockdep_assert_wiphy(local->hw.wiphy);
-  
--@@ -3968,37 +4051,9 @@ int ieee80211_check_combinations(struct
-+@@ -3972,37 +4055,9 @@ int ieee80211_check_combinations(struct
-  	if (iftype != NL80211_IFTYPE_UNSPECIFIED)
-  		params.iftype_num[iftype] = 1;
-  
-@@ -286,7 +286,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
-  	if (total == 1 && !params.radar_detect)
-  		return 0;
-  
--@@ -4015,30 +4070,17 @@ ieee80211_iter_max_chans(const struct ie
-+@@ -4019,30 +4074,17 @@ ieee80211_iter_max_chans(const struct ie
-  					  c->num_different_channels);
-  }
-  
+@@ -27,7 +29,7 @@ STRIP:=:
+ define Package/firmware-default
+   SECTION:=firmware
+   CATEGORY:=Firmware
+-  URL:=http://git.kernel.org/cgit/linux/kernel/git/firmware/linux-firmware.git
++  URL:=https://github.com/pesa1234/linux-firmware-r.next.git
+   TITLE:=$(1)
+   DEPENDS:=$(2)
+   LICENSE_FILES:=$(3)
 diff --git a/package/kernel/mt76/Makefile b/package/kernel/mt76/Makefile
 index a07175d4d2..d7a299f651 100644
 --- a/package/kernel/mt76/Makefile
@@ -223,120 +113,6 @@ index a07175d4d2..d7a299f651 100644
  		$(PKG_MAKE_FLAGS) \
  		M="$(PKG_BUILD_DIR)" \
  		NOSTDINC_FLAGS="$(NOSTDINC_FLAGS)" \
-diff --git a/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh b/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh
-index 0079c498e7..fb91cbabe6 100755
---- a/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh
-+++ b/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh
-@@ -55,7 +55,12 @@ drv_mac80211_init_device_config() {
- 		he_spr_sr_control \
- 		he_spr_psr_enabled \
- 		he_bss_color_enabled \
--		he_twt_required
-+		he_twt_required \
-+		he_twt_responder \
-+		etxbfen \
-+		itxbfen \
-+		lpi_enable \
-+		beacon_dup
- 	config_add_int \
- 		beamformer_antennas \
- 		beamformee_antennas \
-@@ -66,7 +71,8 @@ drv_mac80211_init_device_config() {
- 		rx_stbc \
- 		tx_stbc \
- 		he_bss_color \
--		he_spr_non_srg_obss_pd_max_offset
-+		he_spr_non_srg_obss_pd_max_offset \
-+		sku_idx
- 	config_add_boolean \
- 		ldpc \
- 		greenfield \
-@@ -142,7 +148,8 @@ mac80211_hostapd_setup_base() {
- 	[ -n "$acs_exclude_dfs" ] && [ "$acs_exclude_dfs" -gt 0 ] &&
- 		append base_cfg "acs_exclude_dfs=1" "$N"
- 
--	json_get_vars noscan ht_coex min_tx_power:0 tx_burst
-+	json_get_vars noscan ht_coex vendor_vht min_tx_power:0 tx_burst
-+	json_get_vars etxbfen:1 itxbfen lpi_enable:0 sku_idx:0 beacon_dup:1
- 	json_get_values ht_capab_list ht_capab
- 	json_get_values channel_list channels
- 
-@@ -296,7 +303,7 @@ mac80211_hostapd_setup_base() {
- 	}
- 	[ "$hwmode" = "a" ] || enable_ac=0
- 
--	if [ "$enable_ac" != "0" ]; then
-+	if [ "$enable_ac" != "0" -o "$vendor_vht" = "1" ]; then
- 		json_get_vars \
- 			rxldpc:1 \
- 			short_gi_80:1 \
-@@ -332,6 +339,12 @@ mac80211_hostapd_setup_base() {
- 		[ "$rx_stbc" -lt "$cap_rx_stbc" ] && cap_rx_stbc="$rx_stbc"
- 		vht_cap="$(( ($vht_cap & ~(0x700)) | ($cap_rx_stbc << 8) ))"
- 
-+		[ "$etxbfen" -eq 0 ] && {
-+			su_beamformer=0
-+			su_beamformee=0
-+			mu_beamformer=0
-+		}
-+
- 		[ "$vht_oper_chwidth" -lt 2 ] && {
- 			vht160=0
- 			short_gi_160=0
-@@ -427,6 +440,7 @@ mac80211_hostapd_setup_base() {
- 			he_su_beamformee:1 \
- 			he_mu_beamformer:1 \
- 			he_twt_required:0 \
-+			he_twt_responder:0 \
- 			he_spr_sr_control:3 \
- 			he_spr_psr_enabled:0 \
- 			he_spr_non_srg_obss_pd_max_offset:0 \
-@@ -443,6 +457,11 @@ mac80211_hostapd_setup_base() {
- 			append base_cfg "he_oper_chwidth=$vht_oper_chwidth" "$N"
- 			append base_cfg "he_oper_centr_freq_seg0_idx=$vht_center_seg0" "$N"
- 		}
-+		
-+		[ "$etxbfen" -eq 0 ] && {
-+			he_su_beamformer=0
-+			he_mu_beamformer=0
-+		}
- 
- 		mac80211_add_he_capabilities \
- 			he_su_beamformer:${he_phy_cap:6:2}:0x80:$he_su_beamformer \
-@@ -450,6 +469,13 @@ mac80211_hostapd_setup_base() {
- 			he_mu_beamformer:${he_phy_cap:8:2}:0x2:$he_mu_beamformer \
- 			he_spr_psr_enabled:${he_phy_cap:14:2}:0x1:$he_spr_psr_enabled \
- 			he_twt_required:${he_mac_cap:0:2}:0x6:$he_twt_required
-+			
-+		if [ -n "$he_twt_responder" ]; then
-+			append base_cfg "he_twt_responder=$he_twt_responder" "$N"
-+		else
-+			he_twt_responder=0
-+			append base_cfg "he_twt_responder=$he_twt_responder" "$N"
-+		fi
- 
- 		if [ "$he_bss_color_enabled" -gt 0 ]; then
- 			append base_cfg "he_bss_color=$he_bss_color" "$N"
-@@ -491,6 +517,8 @@ mac80211_hostapd_setup_base() {
- 		append base_cfg "he_mu_edca_ac_vo_ecwmax=7" "$N"
- 		append base_cfg "he_mu_edca_ac_vo_timer=255" "$N"
- 	fi
-+	
-+	set_default tx_burst 2
- 
- 	hostapd_prepare_device_config "$hostapd_conf_file" nl80211
- 	cat >> "$hostapd_conf_file" <<EOF
-@@ -498,6 +526,10 @@ ${channel:+channel=$channel}
- ${channel_list:+chanlist=$channel_list}
- ${hostapd_noscan:+noscan=1}
- ${tx_burst:+tx_queue_data2_burst=$tx_burst}
-+${itxbfen:+ibf_enable=$itxbfen}
-+${lpi_enable:+lpi_enable=$lpi_enable}
-+${sku_idx:+sku_idx=$sku_idx}
-+${beacon_dup:+beacon_dup=$beacon_dup}
- ${multiple_bssid:+mbssid=$multiple_bssid}
- #num_global_macaddr=$num_global_macaddr
- $base_cfg
 diff --git a/package/network/services/hostapd/patches/762-AP-don-t-ignore-probe-requests-with-invalid-DSSS-par.patch b/package/network/services/hostapd/patches/762-AP-don-t-ignore-probe-requests-with-invalid-DSSS-par.patch
 index 3cb1abeb58..7fd0a4bc2d 100644
 --- a/package/network/services/hostapd/patches/762-AP-don-t-ignore-probe-requests-with-invalid-DSSS-par.patch
