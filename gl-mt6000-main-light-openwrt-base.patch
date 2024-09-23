@@ -1,16 +1,3 @@
-diff --git a/include/autotools.mk b/include/autotools.mk
-index 7fc6f37175..d0e4b3642f 100644
---- a/include/autotools.mk
-+++ b/include/autotools.mk
-@@ -44,7 +44,7 @@ define autoreconf
- 				touch NEWS AUTHORS COPYING ABOUT-NLS ChangeLog; \
- 				$(AM_TOOL_PATHS) \
- 					LIBTOOLIZE='$(STAGING_DIR_HOST)/bin/libtoolize --install' \
--					$(STAGING_DIR_HOST)/bin/autoreconf -v -f -i \
-+					$(STAGING_DIR_HOST)/bin/autoreconf -v -f -i -s \
- 					$(if $(word 2,$(3)),--no-recursive) \
- 					-B $(STAGING_DIR_HOST)/share/aclocal \
- 					$(patsubst %,-I %,$(5)) \
 diff --git a/package/base-files/files/etc/sysctl.conf b/package/base-files/files/etc/sysctl.conf
 index ae04212f42..6f9465f8e2 100644
 --- a/package/base-files/files/etc/sysctl.conf
@@ -23,55 +10,58 @@ index ae04212f42..6f9465f8e2 100644
 +net.ipv4.tcp_rmem=4096 131072 6291456
 +net.core.wmem_default=1027840
 +net.core.wmem_max=1027840
-diff --git a/package/firmware/linux-firmware/Makefile b/package/firmware/linux-firmware/Makefile
-index f256a1efe4..4bf71b6d65 100644
---- a/package/firmware/linux-firmware/Makefile
-+++ b/package/firmware/linux-firmware/Makefile
-@@ -8,12 +8,14 @@
- include $(TOPDIR)/rules.mk
+diff --git a/package/kernel/mac80211/Makefile b/package/kernel/mac80211/Makefile
+index 099bdae46f..66f79acd58 100644
+--- a/package/kernel/mac80211/Makefile
++++ b/package/kernel/mac80211/Makefile
+@@ -11,7 +11,7 @@ include $(INCLUDE_DIR)/kernel.mk
+ PKG_NAME:=mac80211
  
- PKG_NAME:=linux-firmware
--PKG_VERSION:=20240513
-+PKG_VERSION:=20240825
- PKG_RELEASE:=1
+ PKG_VERSION:=6.9.9
+-PKG_RELEASE:=1
++PKG_RELEASE:=1.2
+ PKG_LICENSE:=GPL-2.0-only
+ PKG_LICENSE_FILES:=COPYING
  
--PKG_SOURCE_URL:=@KERNEL/linux/kernel/firmware
--PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
--PKG_HASH:=9f05edb99668135d37cedc4fdd18aac2802dc9e4566e086e6c6c2e321f3ecc4e
-+PKG_SOURCE_URL:=https://github.com/pesa1234/linux-firmware-r.next
-+PKG_SOURCE_PROTO:=git
-+PKG_SOURCE_DATE:=2024-08-25
-+PKG_SOURCE_VERSION:=f02cce135268a1741b610e9c243f8d0b53e9f4e2
-+PKG_MIRROR_HASH:=5d91238db9ac6a16e4df28771353c7da81a0d957fe1fc88f1ede86dcdfecc911
- 
- PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
- 
-@@ -27,7 +29,7 @@ STRIP:=:
- define Package/firmware-default
-   SECTION:=firmware
-   CATEGORY:=Firmware
--  URL:=http://git.kernel.org/cgit/linux/kernel/git/firmware/linux-firmware.git
-+  URL:=https://github.com/pesa1234/linux-firmware-r.next.git
-   TITLE:=$(1)
-   DEPENDS:=$(2)
-   LICENSE_FILES:=$(3)
+@@ -348,7 +348,6 @@ define Build/Patch
+ 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/ath9k,ath9k/)
+ 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/ath10k,ath10k/)
+ 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/ath11k,ath11k/)
+-	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/ath12k,ath12k/)
+ 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/rt2x00,rt2x00/)
+ 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/mt7601u,mt7601u/)
+ 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/mwl,mwl/)
+@@ -365,7 +364,6 @@ define Quilt/Refresh/Package
+ 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/ath9k,ath9k/)
+ 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/ath10k,ath10k/)
+ 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/ath11k,ath11k/)
+-	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/ath12k,ath12k/)
+ 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/rt2x00,rt2x00/)
+ 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/mt7601u,mt7601u/)
+ 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/mwl,mwl/)
 diff --git a/package/kernel/mt76/Makefile b/package/kernel/mt76/Makefile
-index a07175d4d2..d7a299f651 100644
+index 4d808c96b3..ff4f956ea9 100644
 --- a/package/kernel/mt76/Makefile
 +++ b/package/kernel/mt76/Makefile
-@@ -6,11 +6,11 @@ PKG_RELEASE=1
+@@ -1,16 +1,16 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=mt76
+-PKG_RELEASE=1
++PKG_RELEASE=1.2
+ 
  PKG_LICENSE:=GPLv2
  PKG_LICENSE_FILES:=
  
 -PKG_SOURCE_URL:=https://github.com/openwrt/mt76
 +PKG_SOURCE_URL:=https://github.com/pesa1234/mt76
  PKG_SOURCE_PROTO:=git
--PKG_SOURCE_DATE:=2024-08-25
--PKG_SOURCE_VERSION:=904ef52a8d04f6808284011579fdd45418f643d9
--PKG_MIRROR_HASH:=4e285ac767336aab56006fc9f8ca1c35d639926b03de1d6d1667ffc939d81c87
-+PKG_SOURCE_DATE:=2024-08-26
-+PKG_SOURCE_VERSION:=5c5e685eb02844942d2f83196141282b856704db
-+PKG_MIRROR_HASH:=417f11345939f15c8020005bce6f441aca5d26af3360a7ca330dec540821fc51
+-PKG_SOURCE_DATE:=2024-09-05
+-PKG_SOURCE_VERSION:=65cc3daf2a332cc658e9f7438cdadde4392e672e
+-PKG_MIRROR_HASH:=c29c4f883051a6360119156a03e010ac11573011b23d9e873f83c720600970e7
++PKG_SOURCE_DATE:=2024-09-08
++PKG_SOURCE_VERSION:=a2a9d9826277c9d76f5c19fd98a27c6145fa6fbd
++PKG_MIRROR_HASH:=ee73463cd1c9a9d904ea0c7b7f413ed2ea01496bb7a356c390f9e8de31ca097c
  
  PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
  PKG_USE_NINJA:=0
@@ -113,323 +103,193 @@ index a07175d4d2..d7a299f651 100644
  		$(PKG_MAKE_FLAGS) \
  		M="$(PKG_BUILD_DIR)" \
  		NOSTDINC_FLAGS="$(NOSTDINC_FLAGS)" \
-diff --git a/package/network/services/hostapd/patches/762-AP-don-t-ignore-probe-requests-with-invalid-DSSS-par.patch b/package/network/services/hostapd/patches/762-AP-don-t-ignore-probe-requests-with-invalid-DSSS-par.patch
-index 3cb1abeb58..7fd0a4bc2d 100644
---- a/package/network/services/hostapd/patches/762-AP-don-t-ignore-probe-requests-with-invalid-DSSS-par.patch
-+++ b/package/network/services/hostapd/patches/762-AP-don-t-ignore-probe-requests-with-invalid-DSSS-par.patch
-@@ -26,11 +26,9 @@ Signed-off-by: David Bauer <mail@david-bauer.net>
-  src/ap/beacon.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/package/network/config/wifi-scripts/files/lib/netifd/hostapd.sh b/package/network/config/wifi-scripts/files/lib/netifd/hostapd.sh
+index 32b9d9d082..a7d3dd4e23 100644
+--- a/package/network/config/wifi-scripts/files/lib/netifd/hostapd.sh
++++ b/package/network/config/wifi-scripts/files/lib/netifd/hostapd.sh
+@@ -120,6 +120,7 @@ hostapd_common_add_device_config() {
+ 	config_add_int rssi_reject_assoc_rssi
+ 	config_add_int rssi_ignore_probe_request
+ 	config_add_int maxassoc
++	config_add_boolean vendor_vht
  
--diff --git a/src/ap/beacon.c b/src/ap/beacon.c
--index 8cd1c4170..bb9329085 100644
- --- a/src/ap/beacon.c
- +++ b/src/ap/beacon.c
--@@ -905,7 +905,7 @@ void handle_probe_req(struct hostapd_data *hapd,
-+@@ -1410,7 +1410,7 @@ void handle_probe_req(struct hostapd_dat
-  	 * is less likely to see them (Probe Request frame sent on a
-  	 * neighboring, but partially overlapping, channel).
-  	 */
-@@ -39,6 +37,3 @@ index 8cd1c4170..bb9329085 100644
-  	    hapd->iface->current_mode &&
-  	    (hapd->iface->current_mode->mode == HOSTAPD_MODE_IEEE80211G ||
-  	     hapd->iface->current_mode->mode == HOSTAPD_MODE_IEEE80211B) &&
---- 
--2.43.0
--
+ 	config_add_string acs_chan_bias
+ 	config_add_array hostapd_options
+@@ -139,7 +140,7 @@ hostapd_prepare_device_config() {
+ 	json_get_vars country country3 country_ie beacon_int:100 doth require_mode legacy_rates \
+ 		acs_chan_bias local_pwr_constraint spectrum_mgmt_required airtime_mode cell_density \
+ 		rts_threshold beacon_rate rssi_reject_assoc_rssi rssi_ignore_probe_request maxassoc \
+-		mbssid:0
++		vendor_vht mbssid:0
+ 
+ 	hostapd_set_log_options base_cfg
+ 
+@@ -208,6 +209,7 @@ hostapd_prepare_device_config() {
+ 				set_default rate_list "24000 36000 48000 54000"
+ 				set_default basic_rate_list "24000"
+ 			fi
++			[ -n "$vendor_vht" ] && append base_cfg "vendor_vht=$vendor_vht" "$N"
+ 		;;
+ 		a)
+ 			if [ "$cell_density" -eq 1 ]; then
+@@ -318,7 +320,7 @@ hostapd_common_add_bss_config() {
+ 	config_add_string time_zone
+ 	config_add_string vendor_elements
+ 
+-	config_add_boolean ieee80211k rrm_neighbor_report rrm_beacon_report
++	config_add_boolean ieee80211k rrm_neighbor_report rrm_beacon_report rnr
+ 
+ 	config_add_boolean ftm_responder stationary_ap
+ 	config_add_string lci civic
+diff --git a/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh b/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh
+index 11b11c411f..781d047985 100755
+--- a/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh
++++ b/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh
+@@ -55,7 +55,12 @@ drv_mac80211_init_device_config() {
+ 		he_spr_sr_control \
+ 		he_spr_psr_enabled \
+ 		he_bss_color_enabled \
+-		he_twt_required
++		he_twt_required \
++		he_twt_responder \
++		etxbfen \
++		itxbfen \
++		lpi_enable \
++		beacon_dup
+ 	config_add_int \
+ 		beamformer_antennas \
+ 		beamformee_antennas \
+@@ -66,7 +71,8 @@ drv_mac80211_init_device_config() {
+ 		rx_stbc \
+ 		tx_stbc \
+ 		he_bss_color \
+-		he_spr_non_srg_obss_pd_max_offset
++		he_spr_non_srg_obss_pd_max_offset \
++		sku_idx
+ 	config_add_boolean \
+ 		ldpc \
+ 		greenfield \
+@@ -142,7 +148,8 @@ mac80211_hostapd_setup_base() {
+ 	[ -n "$acs_exclude_dfs" ] && [ "$acs_exclude_dfs" -gt 0 ] &&
+ 		append base_cfg "acs_exclude_dfs=1" "$N"
+ 
+-	json_get_vars noscan ht_coex min_tx_power:0 tx_burst
++	json_get_vars noscan ht_coex vendor_vht min_tx_power:0 tx_burst
++	json_get_vars etxbfen:1 itxbfen lpi_enable:0 sku_idx:0 beacon_dup:1
+ 	json_get_values ht_capab_list ht_capab
+ 	json_get_values channel_list channels
+ 
+@@ -296,7 +303,7 @@ mac80211_hostapd_setup_base() {
+ 	}
+ 	[ "$hwmode" = "a" ] || enable_ac=0
+ 
+-	if [ "$enable_ac" != "0" ]; then
++	if [ "$enable_ac" != "0" -o "$vendor_vht" = "1" ]; then
+ 		json_get_vars \
+ 			rxldpc:1 \
+ 			short_gi_80:1 \
+@@ -332,6 +339,12 @@ mac80211_hostapd_setup_base() {
+ 		[ "$rx_stbc" -lt "$cap_rx_stbc" ] && cap_rx_stbc="$rx_stbc"
+ 		vht_cap="$(( ($vht_cap & ~(0x700)) | ($cap_rx_stbc << 8) ))"
+ 
++		[ "$etxbfen" -eq 0 ] && {
++			su_beamformer=0
++			su_beamformee=0
++			mu_beamformer=0
++		}
++
+ 		[ "$vht_oper_chwidth" -lt 2 ] && {
+ 			vht160=0
+ 			short_gi_160=0
+@@ -427,6 +440,7 @@ mac80211_hostapd_setup_base() {
+ 			he_su_beamformee:1 \
+ 			he_mu_beamformer:1 \
+ 			he_twt_required:0 \
++			he_twt_responder:0 \
+ 			he_spr_sr_control:3 \
+ 			he_spr_psr_enabled:0 \
+ 			he_spr_non_srg_obss_pd_max_offset:0 \
+@@ -443,6 +457,11 @@ mac80211_hostapd_setup_base() {
+ 			append base_cfg "he_oper_chwidth=$vht_oper_chwidth" "$N"
+ 			append base_cfg "he_oper_centr_freq_seg0_idx=$vht_center_seg0" "$N"
+ 		}
++		
++		[ "$etxbfen" -eq 0 ] && {
++			he_su_beamformer=0
++			he_mu_beamformer=0
++		}
+ 
+ 		mac80211_add_he_capabilities \
+ 			he_su_beamformer:${he_phy_cap:6:2}:0x80:$he_su_beamformer \
+@@ -450,6 +469,13 @@ mac80211_hostapd_setup_base() {
+ 			he_mu_beamformer:${he_phy_cap:8:2}:0x2:$he_mu_beamformer \
+ 			he_spr_psr_enabled:${he_phy_cap:14:2}:0x1:$he_spr_psr_enabled \
+ 			he_twt_required:${he_mac_cap:0:2}:0x6:$he_twt_required
++			
++		if [ -n "$he_twt_responder" ]; then
++			append base_cfg "he_twt_responder=$he_twt_responder" "$N"
++		else
++			he_twt_responder=0
++			append base_cfg "he_twt_responder=$he_twt_responder" "$N"
++		fi
+ 
+ 		if [ "$he_bss_color_enabled" -gt 0 ]; then
+ 			append base_cfg "he_bss_color=$he_bss_color" "$N"
+@@ -498,6 +524,10 @@ ${channel:+channel=$channel}
+ ${channel_list:+chanlist=$channel_list}
+ ${hostapd_noscan:+noscan=1}
+ ${tx_burst:+tx_queue_data2_burst=$tx_burst}
++${itxbfen:+ibf_enable=$itxbfen}
++${lpi_enable:+lpi_enable=$lpi_enable}
++${sku_idx:+sku_idx=$sku_idx}
++${beacon_dup:+beacon_dup=$beacon_dup}
+ ${multiple_bssid:+mbssid=$multiple_bssid}
+ #num_global_macaddr=$num_global_macaddr
+ $base_cfg
+diff --git a/package/network/services/hostapd/patches/730-ft_iface.patch b/package/network/services/hostapd/patches/730-ft_iface.patch
+index ac7d3abd78..648641e43a 100644
+--- a/package/network/services/hostapd/patches/730-ft_iface.patch
++++ b/package/network/services/hostapd/patches/730-ft_iface.patch
+@@ -29,7 +29,7 @@ a VLAN interface on top of the bridge, instead of using the bridge directly
+  	int bridge_hairpin; /* hairpin_mode on bridge members */
+ --- a/src/ap/wpa_auth_glue.c
+ +++ b/src/ap/wpa_auth_glue.c
+-@@ -1821,8 +1821,12 @@ int hostapd_setup_wpa(struct hostapd_dat
++@@ -1815,8 +1815,12 @@ int hostapd_setup_wpa(struct hostapd_dat
+  	    wpa_key_mgmt_ft(hapd->conf->wpa_key_mgmt)) {
+  		const char *ft_iface;
+  
 diff --git a/package/network/services/hostapd/patches/780-Implement-APuP-Access-Point-Micro-Peering.patch b/package/network/services/hostapd/patches/780-Implement-APuP-Access-Point-Micro-Peering.patch
-index b6e4ef9571..5e608f8c12 100644
+index 157b7dbb82..6a8fa1f831 100644
 --- a/package/network/services/hostapd/patches/780-Implement-APuP-Access-Point-Micro-Peering.patch
 +++ b/package/network/services/hostapd/patches/780-Implement-APuP-Access-Point-Micro-Peering.patch
-@@ -34,8 +34,6 @@ Signed-off-by: Gioacchino Mazzurco <gio@polymathes.cc>
-  create mode 100644 src/ap/apup.c
-  create mode 100644 src/ap/apup.h
- 
--diff --git a/hostapd/Makefile b/hostapd/Makefile
--index 73048c1297..c890a7f29c 100644
- --- a/hostapd/Makefile
- +++ b/hostapd/Makefile
- @@ -1415,6 +1415,11 @@ ifdef CONFIG_NO_TKIP
-@@ -50,11 +48,9 @@ index 73048c1297..c890a7f29c 100644
-  $(DESTDIR)$(BINDIR)/%: %
-  	install -D $(<) $(@)
-  
--diff --git a/hostapd/config_file.c b/hostapd/config_file.c
--index bba5b19164..ef906199ec 100644
- --- a/hostapd/config_file.c
- +++ b/hostapd/config_file.c
--@@ -5058,6 +5058,15 @@ static int hostapd_config_fill(struct hostapd_config *conf,
-+@@ -5058,6 +5058,15 @@ static int hostapd_config_fill(struct ho
-  		bss->mld_indicate_disabled = atoi(pos);
-  #endif /* CONFIG_TESTING_OPTIONS */
-  #endif /* CONFIG_IEEE80211BE */
-@@ -70,8 +66,6 @@ index bba5b19164..ef906199ec 100644
-  	} else {
-  		wpa_printf(MSG_ERROR,
-  			   "Line %d: unknown configuration item '%s'",
--diff --git a/src/ap/ap_config.h b/src/ap/ap_config.h
--index 0e52a9990d..9102db5ed0 100644
- --- a/src/ap/ap_config.h
- +++ b/src/ap/ap_config.h
- @@ -970,6 +970,35 @@ struct hostapd_bss_config {
-@@ -110,11 +104,9 @@ index 0e52a9990d..9102db5ed0 100644
-  };
-  
-  /**
--diff --git a/src/ap/ap_drv_ops.c b/src/ap/ap_drv_ops.c
--index e7396d9aea..05460e3d73 100644
- --- a/src/ap/ap_drv_ops.c
- +++ b/src/ap/ap_drv_ops.c
--@@ -382,9 +382,35 @@ int hostapd_set_wds_sta(struct hostapd_data *hapd, char *ifname_wds,
-+@@ -382,9 +382,35 @@ int hostapd_set_wds_sta(struct hostapd_d
-  			const u8 *addr, int aid, int val)
-  {
-  	const char *bridge = NULL;
-@@ -150,11 +142,9 @@ index e7396d9aea..05460e3d73 100644
-  	if (hapd->conf->wds_bridge[0])
-  		bridge = hapd->conf->wds_bridge;
-  	return hapd->driver->set_wds_sta(hapd->drv_priv, addr, aid, val,
--diff --git a/src/ap/ap_drv_ops.h b/src/ap/ap_drv_ops.h
--index fa89d2398e..ab4dc8eb16 100644
- --- a/src/ap/ap_drv_ops.h
- +++ b/src/ap/ap_drv_ops.h
--@@ -33,6 +33,9 @@ int hostapd_set_drv_ieee8021x(struct hostapd_data *hapd, const char *ifname,
-+@@ -33,6 +33,9 @@ int hostapd_set_drv_ieee8021x(struct hos
-  			      int enabled);
-  int hostapd_vlan_if_add(struct hostapd_data *hapd, const char *ifname);
-  int hostapd_vlan_if_remove(struct hostapd_data *hapd, const char *ifname);
-@@ -163,10 +153,7 @@ index fa89d2398e..ab4dc8eb16 100644
- + */
-  int hostapd_set_wds_sta(struct hostapd_data *hapd, char *ifname_wds,
-  			const u8 *addr, int aid, int val);
-- 
--diff --git a/src/ap/apup.c b/src/ap/apup.c
--new file mode 100644
--index 0000000000..3575f1b6c6
-+ int hostapd_sta_add(struct hostapd_data *hapd,
- --- /dev/null
- +++ b/src/ap/apup.c
- @@ -0,0 +1,152 @@
-@@ -322,9 +309,6 @@ index 0000000000..3575f1b6c6
- +	           " capabilities %d",
- +	           mIfname, sta_ret->flags, sta_ret->capability);
- +}
--diff --git a/src/ap/apup.h b/src/ap/apup.h
--new file mode 100644
--index 0000000000..a14a283bb4
- --- /dev/null
- +++ b/src/ap/apup.h
- @@ -0,0 +1,24 @@
-@@ -352,8 +336,6 @@ index 0000000000..a14a283bb4
- +void apup_process_beacon(struct hostapd_data *hapd,
- +              const struct ieee80211_mgmt *mgmt, size_t len,
- +              const struct ieee802_11_elems *elems );
--diff --git a/src/ap/ieee802_11.c b/src/ap/ieee802_11.c
--index 1c4dd22da1..09254f18f2 100644
- --- a/src/ap/ieee802_11.c
- +++ b/src/ap/ieee802_11.c
- @@ -59,6 +59,9 @@
-@@ -366,7 +348,7 @@ index 1c4dd22da1..09254f18f2 100644
+@@ -372,7 +372,7 @@ Hotfix-by: Sebastian Gottschall https://github.com/mirror/dd-wrt/commit/0c3001a6
   
   #ifdef CONFIG_FILS
   static struct wpabuf *
--@@ -3469,8 +3472,8 @@ static u16 check_multi_ap(struct hostapd_data *hapd, struct sta_info *sta,
-+@@ -3469,8 +3472,8 @@ static u16 check_multi_ap(struct hostapd
+-@@ -3615,8 +3618,8 @@ static u16 check_multi_ap(struct hostapd
++@@ -3588,8 +3591,8 @@ static u16 check_multi_ap(struct hostapd
   }
   
   
-@@ -377,7 +359,7 @@ index 1c4dd22da1..09254f18f2 100644
+@@ -383,7 +383,7 @@ Hotfix-by: Sebastian Gottschall https://github.com/mirror/dd-wrt/commit/0c3001a6
   {
   	/* Supported rates not used in IEEE 802.11ad/DMG */
   	if (hapd->iface->current_mode &&
--@@ -3855,7 +3858,7 @@ static int __check_assoc_ies(struct hostapd_data *hapd, struct sta_info *sta,
-+@@ -3855,7 +3858,7 @@ static int __check_assoc_ies(struct host
+-@@ -4003,7 +4006,7 @@ static int __check_assoc_ies(struct host
++@@ -3976,7 +3979,7 @@ static int __check_assoc_ies(struct host
   			       elems->ext_capab_len);
   	if (resp != WLAN_STATUS_SUCCESS)
   		return resp;
-@@ -386,7 +368,7 @@ index 1c4dd22da1..09254f18f2 100644
+@@ -392,7 +392,7 @@ Hotfix-by: Sebastian Gottschall https://github.com/mirror/dd-wrt/commit/0c3001a6
   	if (resp != WLAN_STATUS_SUCCESS)
   		return resp;
   
--@@ -5927,6 +5930,11 @@ static void handle_beacon(struct hostapd_data *hapd,
-+@@ -5927,6 +5930,11 @@ static void handle_beacon(struct hostapd
+-@@ -6058,6 +6061,11 @@ static void handle_beacon(struct hostapd
++@@ -6031,6 +6034,11 @@ static void handle_beacon(struct hostapd
   				      0);
   
   	ap_list_process_beacon(hapd->iface, mgmt, &elems, fi);
-@@ -398,11 +380,9 @@ index 1c4dd22da1..09254f18f2 100644
-  }
-  
-  
--diff --git a/src/ap/ieee802_11.h b/src/ap/ieee802_11.h
--index a35486d464..0861bef82e 100644
- --- a/src/ap/ieee802_11.h
- +++ b/src/ap/ieee802_11.h
--@@ -108,6 +108,8 @@ int hostapd_process_ml_assoc_req_addr(struct hostapd_data *hapd,
-+@@ -108,6 +108,8 @@ int hostapd_process_ml_assoc_req_addr(st
-  				      const u8 *basic_mle, size_t basic_mle_len,
-  				      u8 *mld_addr);
-  int hostapd_get_aid(struct hostapd_data *hapd, struct sta_info *sta);
-@@ -411,8 +391,6 @@ index a35486d464..0861bef82e 100644
-  u16 copy_sta_ht_capab(struct hostapd_data *hapd, struct sta_info *sta,
-  		      const u8 *ht_capab);
-  u16 copy_sta_vendor_vht(struct hostapd_data *hapd, struct sta_info *sta,
--diff --git a/src/drivers/driver.h b/src/drivers/driver.h
--index 1bbb9672cd..8d26561e97 100644
- --- a/src/drivers/driver.h
- +++ b/src/drivers/driver.h
- @@ -3976,7 +3976,7 @@ struct wpa_driver_ops {
-@@ -424,11 +402,9 @@ index 1bbb9672cd..8d26561e97 100644
-  
-  	/**
-  	 * send_action - Transmit an Action frame
--diff --git a/src/drivers/driver_nl80211.c b/src/drivers/driver_nl80211.c
--index aeb1e6beef..b6e4ddd86d 100644
- --- a/src/drivers/driver_nl80211.c
- +++ b/src/drivers/driver_nl80211.c
--@@ -8415,24 +8415,14 @@ static int have_ifidx(struct wpa_driver_nl80211_data *drv, int ifidx,
-+@@ -8415,24 +8415,14 @@ static int have_ifidx(struct wpa_driver_
-  
-  
-  static int i802_set_wds_sta(void *priv, const u8 *addr, int aid, int val,
-@@ -455,6 +431,3 @@ index aeb1e6beef..b6e4ddd86d 100644
-  	wpa_printf(MSG_DEBUG, "nl80211: Set WDS STA addr=" MACSTR
-  		   " aid=%d val=%d name=%s", MAC2STR(addr), aid, val, name);
-  	if (val) {
---- 
--2.44.2
--
-diff --git a/package/network/services/hostapd/patches/790-APuP-add-ubus-notification-when-a-peer-comes-up.patch b/package/network/services/hostapd/patches/790-APuP-add-ubus-notification-when-a-peer-comes-up.patch
-index 3746dde00a..b0e2c57b13 100644
---- a/package/network/services/hostapd/patches/790-APuP-add-ubus-notification-when-a-peer-comes-up.patch
-+++ b/package/network/services/hostapd/patches/790-APuP-add-ubus-notification-when-a-peer-comes-up.patch
-@@ -13,8 +13,6 @@ Signed-off-by: Gioacchino Mazzurco <gio@polymathes.cc>
-  src/ap/ubus.h |  5 +++++
-  3 files changed, 28 insertions(+)
- 
--diff --git a/src/ap/apup.c b/src/ap/apup.c
--index 3575f1b6c6..3a3991f4d6 100644
- --- a/src/ap/apup.c
- +++ b/src/ap/apup.c
- @@ -23,6 +23,10 @@
-@@ -28,7 +26,7 @@ index 3575f1b6c6..3a3991f4d6 100644
-  void apup_process_beacon(struct hostapd_data *hapd,
-                const struct ieee80211_mgmt *mgmt, size_t len,
-                const struct ieee802_11_elems *elems )
--@@ -149,4 +153,8 @@ void apup_process_beacon(struct hostapd_data *hapd,
-+@@ -149,4 +153,8 @@ void apup_process_beacon(struct hostapd_
-  	           "apup_process_beacon(...) Added APuP peer at %s with flags: %d,"
-  	           " capabilities %d",
-  	           mIfname, sta_ret->flags, sta_ret->capability);
-@@ -37,11 +35,9 @@ index 3575f1b6c6..3a3991f4d6 100644
- +	hostapd_ubus_notify_apup_newpeer(hapd, mgmt->bssid, mIfname);
- +#endif
-  }
--diff --git a/src/ap/ubus.c b/src/ap/ubus.c
--index 8689494bcf..f21516fc3c 100644
- --- a/src/ap/ubus.c
- +++ b/src/ap/ubus.c
--@@ -2004,3 +2004,18 @@ int hostapd_ubus_notify_bss_transition_query(
-+@@ -2004,3 +2004,18 @@ int hostapd_ubus_notify_bss_transition_q
-  	return ureq.resp;
-  #endif
-  }
-@@ -60,11 +56,9 @@ index 8689494bcf..f21516fc3c 100644
- +	ubus_notify(ctx, &hapd->ubus.obj, "apup-newpeer", b.head, -1);
- +}
- +#endif // def CONFIG_APUP
--diff --git a/src/ap/ubus.h b/src/ap/ubus.h
--index 22767d67ee..1c65e4dcb9 100644
- --- a/src/ap/ubus.h
- +++ b/src/ap/ubus.h
--@@ -71,6 +71,11 @@ int hostapd_ubus_notify_bss_transition_query(
-+@@ -71,6 +71,11 @@ int hostapd_ubus_notify_bss_transition_q
-  void hostapd_ubus_notify_authorized(struct hostapd_data *hapd, struct sta_info *sta,
-  				    const char *auth_alg);
-  
-@@ -76,6 +70,3 @@ index 22767d67ee..1c65e4dcb9 100644
-  #else
-  
-  struct hostapd_ubus_bss {};
---- 
--2.44.2
--
-diff --git a/package/network/services/hostapd/patches/800-APuP-add-ucode-hook-for-when-a-peer-comes-up.patch b/package/network/services/hostapd/patches/800-APuP-add-ucode-hook-for-when-a-peer-comes-up.patch
-index c3e3633060..d5c76994b4 100644
---- a/package/network/services/hostapd/patches/800-APuP-add-ucode-hook-for-when-a-peer-comes-up.patch
-+++ b/package/network/services/hostapd/patches/800-APuP-add-ucode-hook-for-when-a-peer-comes-up.patch
-@@ -10,8 +10,6 @@ Signed-off-by: Gioacchino Mazzurco <gio@polymathes.cc>
-  src/ap/ucode.h |  4 ++++
-  3 files changed, 29 insertions(+)
- 
--diff --git a/src/ap/apup.c b/src/ap/apup.c
--index 3a3991f4d6..f736ddc8e3 100644
- --- a/src/ap/apup.c
- +++ b/src/ap/apup.c
- @@ -27,6 +27,10 @@
-@@ -25,7 +23,7 @@ index 3a3991f4d6..f736ddc8e3 100644
-  void apup_process_beacon(struct hostapd_data *hapd,
-                const struct ieee80211_mgmt *mgmt, size_t len,
-                const struct ieee802_11_elems *elems )
--@@ -157,4 +161,8 @@ void apup_process_beacon(struct hostapd_data *hapd,
-+@@ -157,4 +161,8 @@ void apup_process_beacon(struct hostapd_
-  #ifdef UBUS_SUPPORT
-  	hostapd_ubus_notify_apup_newpeer(hapd, mgmt->bssid, mIfname);
-  #endif
-@@ -34,11 +32,9 @@ index 3a3991f4d6..f736ddc8e3 100644
- +	hostapd_ucode_apup_newpeer(hapd, mIfname);
- +#endif
-  }
--diff --git a/src/ap/ucode.c b/src/ap/ucode.c
--index d344190208..391002feae 100644
- --- a/src/ap/ucode.c
- +++ b/src/ap/ucode.c
--@@ -811,3 +811,20 @@ void hostapd_ucode_free_bss(struct hostapd_data *hapd)
-+@@ -815,3 +815,20 @@ void hostapd_ucode_free_bss(struct hosta
-  	ucv_put(wpa_ucode_call(2));
-  	ucv_gc(vm);
-  }
-@@ -59,11 +55,9 @@ index d344190208..391002feae 100644
- +	ucv_gc(vm);
- +}
- +#endif // def CONFIG_APUP
--diff --git a/src/ap/ucode.h b/src/ap/ucode.h
--index d00b787169..c9bdde6516 100644
- --- a/src/ap/ucode.h
- +++ b/src/ap/ucode.h
--@@ -27,6 +27,10 @@ void hostapd_ucode_add_bss(struct hostapd_data *hapd);
-+@@ -27,6 +27,10 @@ void hostapd_ucode_add_bss(struct hostap
-  void hostapd_ucode_free_bss(struct hostapd_data *hapd);
-  void hostapd_ucode_reload_bss(struct hostapd_data *hapd);
-  
-@@ -74,6 +68,3 @@ index d00b787169..c9bdde6516 100644
-  #else
-  
-  static inline int hostapd_ucode_init(struct hapd_interfaces *ifaces)
---- 
--2.44.2
--
-diff --git a/package/network/services/hostapd/patches/800-SAE-Check-for-invalid-Rejected-Groups-element-length.patch b/package/network/services/hostapd/patches/800-SAE-Check-for-invalid-Rejected-Groups-element-length.patch
-index 97402887bf..a08ef43612 100644
---- a/package/network/services/hostapd/patches/800-SAE-Check-for-invalid-Rejected-Groups-element-length.patch
-+++ b/package/network/services/hostapd/patches/800-SAE-Check-for-invalid-Rejected-Groups-element-length.patch
-@@ -15,7 +15,7 @@ Signed-off-by: Jouni Malinen <j@w1.fi>
- 
- --- a/src/ap/ieee802_11.c
- +++ b/src/ap/ieee802_11.c
--@@ -1229,7 +1229,7 @@ static int check_sae_rejected_groups(str
-+@@ -1232,7 +1232,7 @@ static int check_sae_rejected_groups(str
-  				     struct sae_data *sae)
-  {
-  	const struct wpabuf *groups;
-@@ -24,7 +24,7 @@ Signed-off-by: Jouni Malinen <j@w1.fi>
-  	const u8 *pos;
-  
-  	if (!sae->tmp)
--@@ -1239,7 +1239,15 @@ static int check_sae_rejected_groups(str
-+@@ -1242,7 +1242,15 @@ static int check_sae_rejected_groups(str
-  		return 0;
-  
-  	pos = wpabuf_head(groups);
 diff --git a/target/linux/mediatek/filogic/config-6.6 b/target/linux/mediatek/filogic/config-6.6
 index 818bcfa081..831f14a15d 100644
 --- a/target/linux/mediatek/filogic/config-6.6

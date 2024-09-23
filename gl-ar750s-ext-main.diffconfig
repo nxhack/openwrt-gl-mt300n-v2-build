@@ -147,7 +147,7 @@ CONFIG_PACKAGE_ucode-mod-html=y
 CONFIG_PACKAGE_ucode-mod-math=y
 CONFIG_PACKAGE_uhttpd=y
 CONFIG_PACKAGE_uhttpd-mod-ubus=y
-CONFIG_PACKAGE_umdns=y
+CONFIG_PACKAGE_umdns=m
 CONFIG_PACKAGE_usbids=m
 CONFIG_PACKAGE_usbutils=m
 CONFIG_PACKAGE_wget-ssl=y
@@ -157,6 +157,8 @@ CONFIG_PACKAGE_xz=y
 CONFIG_PACKAGE_xz-utils=y
 CONFIG_PACKAGE_zlib=y
 CONFIG_PREINITOPT=y
+CONFIG_RSYNC_acl=y
+CONFIG_RSYNC_xattr=y
 CONFIG_TARGET_OPTIMIZATION="-O2 -pipe -mno-branch-likely -mno-mips16 -mno-interlink-compressed -msym32 -mframe-header-opt -march=74kc"
 CONFIG_TARGET_OPTIONS=y
 CONFIG_TARGET_PREINIT_TIMEOUT=5
