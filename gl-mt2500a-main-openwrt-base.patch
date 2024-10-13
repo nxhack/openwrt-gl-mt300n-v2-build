@@ -1,15 +1,16 @@
 diff --git a/package/base-files/files/etc/sysctl.conf b/package/base-files/files/etc/sysctl.conf
-index ae04212f42..6f9465f8e2 100644
+index 9ce5061657..709d5bc93a 100644
 --- a/package/base-files/files/etc/sysctl.conf
 +++ b/package/base-files/files/etc/sysctl.conf
-@@ -1 +1,7 @@
- # Defaults are configured in /etc/sysctl.d/* and can be customized in this file
+@@ -1,2 +1,8 @@
+ # User defined entries should be added to this file not to /etc/sysctl.d/* as
 +
 +net.core.rmem_default=1027840
 +net.core.rmem_max=1027840
 +net.ipv4.tcp_rmem=4096 131072 6291456
 +net.core.wmem_default=1027840
 +net.core.wmem_max=1027840
+ # that directory is not backed-up by default and will not survive a reimage
 diff --git a/target/linux/mediatek/filogic/config-6.6 b/target/linux/mediatek/filogic/config-6.6
 index 818bcfa081..831f14a15d 100644
 --- a/target/linux/mediatek/filogic/config-6.6

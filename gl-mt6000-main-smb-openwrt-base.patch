@@ -1,17 +1,18 @@
 diff --git a/package/base-files/files/etc/sysctl.conf b/package/base-files/files/etc/sysctl.conf
-index ae04212f42..6f9465f8e2 100644
+index 9ce5061657..709d5bc93a 100644
 --- a/package/base-files/files/etc/sysctl.conf
 +++ b/package/base-files/files/etc/sysctl.conf
-@@ -1 +1,7 @@
- # Defaults are configured in /etc/sysctl.d/* and can be customized in this file
+@@ -1,2 +1,8 @@
+ # User defined entries should be added to this file not to /etc/sysctl.d/* as
 +
 +net.core.rmem_default=1027840
 +net.core.rmem_max=1027840
 +net.ipv4.tcp_rmem=4096 131072 6291456
 +net.core.wmem_default=1027840
 +net.core.wmem_max=1027840
+ # that directory is not backed-up by default and will not survive a reimage
 diff --git a/package/kernel/mt76/Makefile b/package/kernel/mt76/Makefile
-index 14b546c3fb..7386a4166a 100644
+index 73f34d8eda..9f0803477a 100644
 --- a/package/kernel/mt76/Makefile
 +++ b/package/kernel/mt76/Makefile
 @@ -1,12 +1,12 @@
@@ -19,7 +20,7 @@ index 14b546c3fb..7386a4166a 100644
  
  PKG_NAME:=mt76
 -PKG_RELEASE=1
-+PKG_RELEASE=1.4
++PKG_RELEASE=1.8
  
  PKG_LICENSE:=GPLv2
  PKG_LICENSE_FILES:=
@@ -27,8 +28,8 @@ index 14b546c3fb..7386a4166a 100644
 -PKG_SOURCE_URL:=https://github.com/openwrt/mt76
 +PKG_SOURCE_URL:=https://github.com/pesa1234/mt76
  PKG_SOURCE_PROTO:=git
- PKG_SOURCE_DATE:=2024-09-29
- PKG_SOURCE_VERSION:=680bc70f161fde0f167e2ae50c771be4775eb50a
+ PKG_SOURCE_DATE:=2024-10-11.1
+ PKG_SOURCE_VERSION:=ecca0e77b4bce629ec1f79d83bbd14a68f919188
 @@ -24,8 +24,7 @@ PKG_CONFIG_DEPENDS += \
  	CONFIG_PACKAGE_kmod-mt76x2-common \
  	CONFIG_PACKAGE_kmod-mt76x2 \
@@ -39,7 +40,7 @@ index 14b546c3fb..7386a4166a 100644
  
  STAMP_CONFIGURED_DEPENDS := $(STAGING_DIR)/usr/include/mac80211-backport/backport/autoconf.h
  
-@@ -406,11 +405,14 @@ ifdef CONFIG_PACKAGE_MAC80211_MESH
+@@ -407,11 +406,14 @@ ifdef CONFIG_PACKAGE_MAC80211_MESH
    NOSTDINC_FLAGS += -DCONFIG_MAC80211_MESH
  endif
  
@@ -57,7 +58,7 @@ index 14b546c3fb..7386a4166a 100644
  ifdef CONFIG_PACKAGE_kmod-mt76-usb
    PKG_MAKE_FLAGS += CONFIG_MT76_USB=m
  endif
-@@ -505,7 +507,8 @@ ifdef CONFIG_PACKAGE_kmod-mt7925e
+@@ -506,7 +508,8 @@ ifdef CONFIG_PACKAGE_kmod-mt7925e
  endif
  
  define Build/Compile
@@ -68,7 +69,7 @@ index 14b546c3fb..7386a4166a 100644
  		M="$(PKG_BUILD_DIR)" \
  		NOSTDINC_FLAGS="$(NOSTDINC_FLAGS)" \
 diff --git a/package/network/config/wifi-scripts/files/lib/netifd/hostapd.sh b/package/network/config/wifi-scripts/files/lib/netifd/hostapd.sh
-index 32b9d9d082..a7d3dd4e23 100644
+index 9ffb46593a..ee8044644c 100644
 --- a/package/network/config/wifi-scripts/files/lib/netifd/hostapd.sh
 +++ b/package/network/config/wifi-scripts/files/lib/netifd/hostapd.sh
 @@ -120,6 +120,7 @@ hostapd_common_add_device_config() {
@@ -76,19 +77,19 @@ index 32b9d9d082..a7d3dd4e23 100644
  	config_add_int rssi_ignore_probe_request
  	config_add_int maxassoc
 +	config_add_boolean vendor_vht
+ 	config_add_int reg_power_type
+ 	config_add_boolean stationary_ap
  
- 	config_add_string acs_chan_bias
- 	config_add_array hostapd_options
-@@ -139,7 +140,7 @@ hostapd_prepare_device_config() {
+@@ -141,7 +142,7 @@ hostapd_prepare_device_config() {
  	json_get_vars country country3 country_ie beacon_int:100 doth require_mode legacy_rates \
  		acs_chan_bias local_pwr_constraint spectrum_mgmt_required airtime_mode cell_density \
  		rts_threshold beacon_rate rssi_reject_assoc_rssi rssi_ignore_probe_request maxassoc \
--		mbssid:0
-+		vendor_vht mbssid:0
+-		mbssid:0 band reg_power_type stationary_ap
++		vendor_vht mbssid:0 band reg_power_type stationary_ap
  
  	hostapd_set_log_options base_cfg
  
-@@ -208,6 +209,7 @@ hostapd_prepare_device_config() {
+@@ -210,6 +211,7 @@ hostapd_prepare_device_config() {
  				set_default rate_list "24000 36000 48000 54000"
  				set_default basic_rate_list "24000"
  			fi
@@ -96,7 +97,7 @@ index 32b9d9d082..a7d3dd4e23 100644
  		;;
  		a)
  			if [ "$cell_density" -eq 1 ]; then
-@@ -318,7 +320,7 @@ hostapd_common_add_bss_config() {
+@@ -328,7 +330,7 @@ hostapd_common_add_bss_config() {
  	config_add_string time_zone
  	config_add_string vendor_elements
  
@@ -106,7 +107,7 @@ index 32b9d9d082..a7d3dd4e23 100644
  	config_add_boolean ftm_responder stationary_ap
  	config_add_string lci civic
 diff --git a/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh b/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh
-index 11b11c411f..781d047985 100755
+index 23e557105b..7d31a2882c 100755
 --- a/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh
 +++ b/package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh
 @@ -55,7 +55,12 @@ drv_mac80211_init_device_config() {
@@ -143,16 +144,16 @@ index 11b11c411f..781d047985 100755
  	json_get_values ht_capab_list ht_capab
  	json_get_values channel_list channels
  
-@@ -296,7 +303,7 @@ mac80211_hostapd_setup_base() {
- 	}
+@@ -315,7 +322,7 @@ mac80211_hostapd_setup_base() {
  	[ "$hwmode" = "a" ] || enable_ac=0
+ 	[ "$band" = "6g" ] && enable_ac=0
  
 -	if [ "$enable_ac" != "0" ]; then
 +	if [ "$enable_ac" != "0" -o "$vendor_vht" = "1" ]; then
  		json_get_vars \
  			rxldpc:1 \
  			short_gi_80:1 \
-@@ -332,6 +339,12 @@ mac80211_hostapd_setup_base() {
+@@ -351,6 +358,12 @@ mac80211_hostapd_setup_base() {
  		[ "$rx_stbc" -lt "$cap_rx_stbc" ] && cap_rx_stbc="$rx_stbc"
  		vht_cap="$(( ($vht_cap & ~(0x700)) | ($cap_rx_stbc << 8) ))"
  
@@ -165,7 +166,7 @@ index 11b11c411f..781d047985 100755
  		[ "$vht_oper_chwidth" -lt 2 ] && {
  			vht160=0
  			short_gi_160=0
-@@ -427,6 +440,7 @@ mac80211_hostapd_setup_base() {
+@@ -448,6 +461,7 @@ mac80211_hostapd_setup_base() {
  			he_su_beamformee:1 \
  			he_mu_beamformer:1 \
  			he_twt_required:0 \
@@ -173,7 +174,7 @@ index 11b11c411f..781d047985 100755
  			he_spr_sr_control:3 \
  			he_spr_psr_enabled:0 \
  			he_spr_non_srg_obss_pd_max_offset:0 \
-@@ -443,6 +457,11 @@ mac80211_hostapd_setup_base() {
+@@ -464,6 +478,11 @@ mac80211_hostapd_setup_base() {
  			append base_cfg "he_oper_chwidth=$vht_oper_chwidth" "$N"
  			append base_cfg "he_oper_centr_freq_seg0_idx=$vht_center_seg0" "$N"
  		}
@@ -185,7 +186,7 @@ index 11b11c411f..781d047985 100755
  
  		mac80211_add_he_capabilities \
  			he_su_beamformer:${he_phy_cap:6:2}:0x80:$he_su_beamformer \
-@@ -450,6 +469,13 @@ mac80211_hostapd_setup_base() {
+@@ -471,6 +490,13 @@ mac80211_hostapd_setup_base() {
  			he_mu_beamformer:${he_phy_cap:8:2}:0x2:$he_mu_beamformer \
  			he_spr_psr_enabled:${he_phy_cap:14:2}:0x1:$he_spr_psr_enabled \
  			he_twt_required:${he_mac_cap:0:2}:0x6:$he_twt_required
@@ -199,7 +200,7 @@ index 11b11c411f..781d047985 100755
  
  		if [ "$he_bss_color_enabled" -gt 0 ]; then
  			append base_cfg "he_bss_color=$he_bss_color" "$N"
-@@ -498,6 +524,10 @@ ${channel:+channel=$channel}
+@@ -527,6 +553,10 @@ ${channel:+channel=$channel}
  ${channel_list:+chanlist=$channel_list}
  ${hostapd_noscan:+noscan=1}
  ${tx_burst:+tx_queue_data2_burst=$tx_burst}
@@ -211,7 +212,7 @@ index 11b11c411f..781d047985 100755
  #num_global_macaddr=$num_global_macaddr
  $base_cfg
 diff --git a/package/network/services/hostapd/Makefile b/package/network/services/hostapd/Makefile
-index 1c0b654866..669dab97ee 100644
+index 0e3396262d..62b8821112 100644
 --- a/package/network/services/hostapd/Makefile
 +++ b/package/network/services/hostapd/Makefile
 @@ -9,9 +9,9 @@ PKG_RELEASE:=1
@@ -221,9 +222,9 @@ index 1c0b654866..669dab97ee 100644
 -PKG_SOURCE_DATE:=2024-09-15
 -PKG_SOURCE_VERSION:=5ace39b0a4cdbe18ddbc4e18f80ee3876233c20b
 -PKG_MIRROR_HASH:=43187d1ddd923970ef3821a0fe267880c2483f6f1a5acd0dd2d7906661ab1372
-+PKG_SOURCE_DATE:=2024-09-27
-+PKG_SOURCE_VERSION:=64d60bb4270745646d7405c05a06523e84b66893
-+PKG_MIRROR_HASH:=c3edec70e3fd821c8f506344325c1d76f5d1cd5184a00f91d28dab5952f804e8
++PKG_SOURCE_DATE:=2024-10-07
++PKG_SOURCE_VERSION:=5834062c23397a613d574d83ea9917453b3cdac3
++PKG_MIRROR_HASH:=ffd523983929c3fe83f0b67c6d32aa1806978da7424cce2a09e3293d9ba0d162
  
  PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
  PKG_LICENSE:=BSD-3-Clause
@@ -330,8 +331,21 @@ index d20a6d76d4..46ceb05a2d 100644
   	freq->channel = channel;
   	/* Setup higher BW only for 5 GHz */
   	if (mode->mode == HOSTAPD_MODE_IEEE80211A) {
+diff --git a/package/network/services/hostapd/patches/011-mesh-use-deterministic-channel-on-channel-switch.patch b/package/network/services/hostapd/patches/011-mesh-use-deterministic-channel-on-channel-switch.patch
+index bfc30e2842..cd3ba08411 100644
+--- a/package/network/services/hostapd/patches/011-mesh-use-deterministic-channel-on-channel-switch.patch
++++ b/package/network/services/hostapd/patches/011-mesh-use-deterministic-channel-on-channel-switch.patch
+@@ -68,7 +68,7 @@ Signed-off-by: Markus Theil <markus.theil@tu-ilmenau.de>
+  		   chan_idx, num_available_chandefs);
+ --- a/src/drivers/driver_nl80211.c
+ +++ b/src/drivers/driver_nl80211.c
+-@@ -11465,6 +11465,10 @@ static int nl80211_switch_channel(void *
++@@ -11480,6 +11480,10 @@ static int nl80211_switch_channel(void *
+  	if (ret)
+  		goto error;
+  
 diff --git a/package/network/services/hostapd/patches/021-fix-sta-add-after-previous-connection.patch b/package/network/services/hostapd/patches/021-fix-sta-add-after-previous-connection.patch
-index b5551f50e6..d3c2e8d5cb 100644
+index b5551f50e6..b91ed68f43 100644
 --- a/package/network/services/hostapd/patches/021-fix-sta-add-after-previous-connection.patch
 +++ b/package/network/services/hostapd/patches/021-fix-sta-add-after-previous-connection.patch
 @@ -4,7 +4,7 @@ Subject: [PATCH] fix adding back stations after a missed deauth/disassoc
@@ -339,7 +353,7 @@ index b5551f50e6..d3c2e8d5cb 100644
  --- a/src/ap/ieee802_11.c
  +++ b/src/ap/ieee802_11.c
 -@@ -4784,6 +4784,13 @@ static int add_associated_sta(struct hos
-+@@ -4791,6 +4791,13 @@ static int add_associated_sta(struct hos
++@@ -4790,6 +4790,13 @@ static int add_associated_sta(struct hos
   	 * drivers to accept the STA parameter configuration. Since this is
   	 * after a new FT-over-DS exchange, a new TK has been derived, so key
   	 * reinstallation is not a concern for this case.
@@ -348,7 +362,7 @@ index b5551f50e6..d3c2e8d5cb 100644
   	wpa_printf(MSG_DEBUG, "Add associated STA " MACSTR
   		   " (added_unassoc=%d auth_alg=%u ft_over_ds=%u reassoc=%d authorized=%d ft_tk=%d fils_tk=%d)",
 -@@ -4797,7 +4804,8 @@ static int add_associated_sta(struct hos
-+@@ -4804,7 +4811,8 @@ static int add_associated_sta(struct hos
++@@ -4803,7 +4810,8 @@ static int add_associated_sta(struct hos
   	    (!(sta->flags & WLAN_STA_AUTHORIZED) ||
   	     (reassoc && sta->ft_over_ds && sta->auth_alg == WLAN_AUTH_FT) ||
   	     (!wpa_auth_sta_ft_tk_already_set(sta->wpa_sm) &&
@@ -379,7 +393,7 @@ index 0af7a379bc..e547c46eb4 100644
   #define VHT_CAP_RX_ANTENNA_PATTERN                  ((u32) BIT(28))
   #define VHT_CAP_TX_ANTENNA_PATTERN                  ((u32) BIT(29))
 diff --git a/package/network/services/hostapd/patches/200-multicall.patch b/package/network/services/hostapd/patches/200-multicall.patch
-index 80a484e974..497c292332 100644
+index 80a484e974..0941c58509 100644
 --- a/package/network/services/hostapd/patches/200-multicall.patch
 +++ b/package/network/services/hostapd/patches/200-multicall.patch
 @@ -94,7 +94,7 @@ This allows building both hostapd and wpa_supplicant as a single binary
@@ -400,6 +414,24 @@ index 80a484e974..497c292332 100644
   }
   
   
+@@ -116,7 +116,7 @@ This allows building both hostapd and wpa_supplicant as a single binary
+  	struct hapd_interfaces *interfaces = ctx;
+ --- a/src/drivers/driver.h
+ +++ b/src/drivers/driver.h
+-@@ -6974,8 +6974,8 @@ union wpa_event_data {
++@@ -6978,8 +6978,8 @@ union wpa_event_data {
+   * Driver wrapper code should call this function whenever an event is received
+   * from the driver.
+   */
+@@ -127,7 +127,7 @@ This allows building both hostapd and wpa_supplicant as a single binary
+  
+  /**
+   * wpa_supplicant_event_global - Report a driver event for wpa_supplicant
+-@@ -6987,7 +6987,7 @@ void wpa_supplicant_event(void *ctx, enu
++@@ -6991,7 +6991,7 @@ void wpa_supplicant_event(void *ctx, enu
+   * Same as wpa_supplicant_event(), but we search for the interface in
+   * wpa_global.
+   */
 @@ -278,7 +278,7 @@ This allows building both hostapd and wpa_supplicant as a single binary
   	os_memset(&eapol_test, 0, sizeof(eapol_test));
  --- a/wpa_supplicant/events.c
@@ -543,6 +575,19 @@ index 0801a93bcd..bee2366619 100644
   	} else if (os_strncmp(buf, "STA-NEXT ", 9) == 0) {
   		reply_len = ap_ctrl_iface_sta_next(wpa_s, buf + 9, reply,
   						   reply_size);
+diff --git a/package/network/services/hostapd/patches/300-noscan.patch b/package/network/services/hostapd/patches/300-noscan.patch
+index 6deb2722b3..ec4f9b809f 100644
+--- a/package/network/services/hostapd/patches/300-noscan.patch
++++ b/package/network/services/hostapd/patches/300-noscan.patch
+@@ -29,7 +29,7 @@ Subject: [PATCH] Add noscan, no_ht_coex config options
+  	int no_pri_sec_switch;
+ --- a/src/ap/hw_features.c
+ +++ b/src/ap/hw_features.c
+-@@ -573,7 +573,8 @@ static int ieee80211n_check_40mhz(struct
++@@ -567,7 +567,8 @@ static int ieee80211n_check_40mhz(struct
+  	int ret;
+  
+  	/* Check that HT40 is used and PRI / SEC switch is allowed */
 diff --git a/package/network/services/hostapd/patches/301-mesh-noscan.patch b/package/network/services/hostapd/patches/301-mesh-noscan.patch
 index e5fd053232..7f297f909d 100644
 --- a/package/network/services/hostapd/patches/301-mesh-noscan.patch
@@ -640,6 +685,28 @@ index cc7b131787..0dcff990c3 100644
   			params.beacon_int = ssid->beacon_int;
   		else
   			params.beacon_int = wpa_s->conf->beacon_int;
+diff --git a/package/network/services/hostapd/patches/463-add-mcast_rate-to-11s.patch b/package/network/services/hostapd/patches/463-add-mcast_rate-to-11s.patch
+index 80ccb1c207..72ccfdf122 100644
+--- a/package/network/services/hostapd/patches/463-add-mcast_rate-to-11s.patch
++++ b/package/network/services/hostapd/patches/463-add-mcast_rate-to-11s.patch
+@@ -29,7 +29,7 @@ Tested-by: Simon Wunderlich <simon.wunderlich@openmesh.com>
+  struct wpa_driver_set_key_params {
+ --- a/src/drivers/driver_nl80211.c
+ +++ b/src/drivers/driver_nl80211.c
+-@@ -12142,6 +12142,18 @@ static int nl80211_put_mesh_id(struct nl
++@@ -12157,6 +12157,18 @@ static int nl80211_put_mesh_id(struct nl
+  }
+  
+  
+@@ -48,7 +48,7 @@ Tested-by: Simon Wunderlich <simon.wunderlich@openmesh.com>
+  static int nl80211_put_mesh_config(struct nl_msg *msg,
+  				   struct wpa_driver_mesh_bss_params *params)
+  {
+-@@ -12203,6 +12215,7 @@ static int nl80211_join_mesh(struct i802
++@@ -12218,6 +12230,7 @@ static int nl80211_join_mesh(struct i802
+  	    nl80211_put_basic_rates(msg, params->basic_rates) ||
+  	    nl80211_put_mesh_id(msg, params->meshid, params->meshid_len) ||
+  	    nl80211_put_beacon_int(msg, params->beacon_int) ||
 diff --git a/package/network/services/hostapd/patches/464-fix-mesh-obss-check.patch b/package/network/services/hostapd/patches/464-fix-mesh-obss-check.patch
 index 9d39db5a63..bcff1e74ee 100644
 --- a/package/network/services/hostapd/patches/464-fix-mesh-obss-check.patch
@@ -654,10 +721,19 @@ index 9d39db5a63..bcff1e74ee 100644
   	freq->freq = ssid->frequency;
   
 diff --git a/package/network/services/hostapd/patches/600-ubus_support.patch b/package/network/services/hostapd/patches/600-ubus_support.patch
-index fb3bfb0120..0602f452c0 100644
+index 256d1cfcc4..1e83e72ff3 100644
 --- a/package/network/services/hostapd/patches/600-ubus_support.patch
 +++ b/package/network/services/hostapd/patches/600-ubus_support.patch
-@@ -187,7 +187,7 @@ probe/assoc/auth requests via object subscribe.
+@@ -116,7 +116,7 @@ probe/assoc/auth requests via object subscribe.
+  #ifdef CONFIG_P2P
+  	if (elems.p2p) {
+  		wpabuf_free(sta->p2p_ie);
+-@@ -1369,6 +1379,7 @@ void hostapd_event_ch_switch(struct host
++@@ -1376,6 +1386,7 @@ void hostapd_event_ch_switch(struct host
+  
+  		wpa_msg(hapd->msg_ctx, MSG_INFO, AP_CSA_FINISHED
+  			"freq=%d dfs=%d", freq, is_dfs);
+@@ -195,7 +195,7 @@ probe/assoc/auth requests via object subscribe.
   struct hostapd_iface * hostapd_alloc_iface(void);
  --- a/src/ap/ieee802_11.c
  +++ b/src/ap/ieee802_11.c
@@ -666,7 +742,7 @@ index fb3bfb0120..0602f452c0 100644
   	u16 auth_alg, auth_transaction, status_code;
   	u16 resp = WLAN_STATUS_SUCCESS;
   	struct sta_info *sta = NULL;
-@@ -196,7 +196,7 @@ probe/assoc/auth requests via object subscribe.
+@@ -204,7 +204,7 @@ probe/assoc/auth requests via object subscribe.
   	u16 fc;
   	const u8 *challenge = NULL;
   	u8 resp_ies[2 + WLAN_AUTH_CHALLENGE_LEN];
@@ -675,7 +751,7 @@ index fb3bfb0120..0602f452c0 100644
   #ifdef CONFIG_IEEE80211BE
   	bool mld_sta = false;
   #endif /* CONFIG_IEEE80211BE */
-@@ -208,7 +208,7 @@ probe/assoc/auth requests via object subscribe.
+@@ -216,7 +216,7 @@ probe/assoc/auth requests via object subscribe.
   
   	if (len < IEEE80211_HDRLEN + sizeof(mgmt->u.auth)) {
   		wpa_printf(MSG_INFO, "handle_auth - too short payload (len=%lu)",
@@ -684,52 +760,52 @@ index fb3bfb0120..0602f452c0 100644
   		resp = WLAN_STATUS_UNSPECIFIED_FAILURE;
   		goto fail;
   	}
-@@ -222,7 +222,7 @@ probe/assoc/auth requests via object subscribe.
+@@ -230,7 +230,7 @@ probe/assoc/auth requests via object subscribe.
   	if (res == HOSTAPD_ACL_PENDING)
   		return;
   
 -@@ -5367,7 +5379,7 @@ static void handle_assoc(struct hostapd_
-+@@ -5374,7 +5386,7 @@ static void handle_assoc(struct hostapd_
++@@ -5373,7 +5385,7 @@ static void handle_assoc(struct hostapd_
   	int resp = WLAN_STATUS_SUCCESS;
   	u16 reply_res = WLAN_STATUS_UNSPECIFIED_FAILURE;
   	const u8 *pos;
-@@ -231,7 +231,7 @@ probe/assoc/auth requests via object subscribe.
+@@ -239,7 +239,7 @@ probe/assoc/auth requests via object subscribe.
   	struct sta_info *sta;
   	u8 *tmp = NULL;
   #ifdef CONFIG_FILS
 -@@ -5609,6 +5621,11 @@ static void handle_assoc(struct hostapd_
-+@@ -5616,6 +5628,11 @@ static void handle_assoc(struct hostapd_
++@@ -5615,6 +5627,11 @@ static void handle_assoc(struct hostapd_
   		left = res;
   	}
   #endif /* CONFIG_FILS */
-@@ -243,7 +243,7 @@ probe/assoc/auth requests via object subscribe.
+@@ -251,7 +251,7 @@ probe/assoc/auth requests via object subscribe.
   
   	/* followed by SSID and Supported rates; and HT capabilities if 802.11n
   	 * is used */
 -@@ -5711,6 +5728,13 @@ static void handle_assoc(struct hostapd_
-+@@ -5718,6 +5735,13 @@ static void handle_assoc(struct hostapd_
++@@ -5717,6 +5734,13 @@ static void handle_assoc(struct hostapd_
   	if (set_beacon)
   		ieee802_11_update_beacons(hapd->iface);
   
-@@ -257,7 +257,7 @@ probe/assoc/auth requests via object subscribe.
+@@ -265,7 +265,7 @@ probe/assoc/auth requests via object subscribe.
    fail:
   
   	/*
 -@@ -5940,6 +5964,7 @@ static void handle_disassoc(struct hosta
-+@@ -5947,6 +5971,7 @@ static void handle_disassoc(struct hosta
++@@ -5946,6 +5970,7 @@ static void handle_disassoc(struct hosta
   			   (unsigned long) len);
   		return;
   	}
-@@ -265,7 +265,7 @@ probe/assoc/auth requests via object subscribe.
+@@ -273,7 +273,7 @@ probe/assoc/auth requests via object subscribe.
   
   	sta = ap_get_sta(hapd, mgmt->sa);
   	if (!sta) {
 -@@ -5971,6 +5996,8 @@ static void handle_deauth(struct hostapd
-+@@ -5978,6 +6003,8 @@ static void handle_deauth(struct hostapd
++@@ -5977,6 +6002,8 @@ static void handle_deauth(struct hostapd
   	/* Clear the PTKSA cache entries for PASN */
   	ptksa_cache_flush(hapd->ptksa, mgmt->sa, WPA_CIPHER_NONE);
   
-@@ -675,7 +675,7 @@ probe/assoc/auth requests via object subscribe.
+@@ -683,7 +683,7 @@ probe/assoc/auth requests via object subscribe.
   			break;
  --- a/wpa_supplicant/wpa_supplicant.c
  +++ b/wpa_supplicant/wpa_supplicant.c
@@ -738,7 +814,7 @@ index fb3bfb0120..0602f452c0 100644
   	}
   #endif /* CONFIG_P2P */
   
-@@ -684,7 +684,7 @@ probe/assoc/auth requests via object subscribe.
+@@ -692,7 +692,7 @@ probe/assoc/auth requests via object subscribe.
   	return wpa_s;
   }
   
@@ -747,7 +823,7 @@ index fb3bfb0120..0602f452c0 100644
   	struct wpa_supplicant *parent = wpa_s->parent;
   #endif /* CONFIG_MESH */
   
-@@ -693,7 +693,7 @@ probe/assoc/auth requests via object subscribe.
+@@ -701,7 +701,7 @@ probe/assoc/auth requests via object subscribe.
   	/* Remove interface from the global list of interfaces */
   	prev = global->ifaces;
   	if (prev == wpa_s) {
@@ -757,9 +833,63 @@ index fb3bfb0120..0602f452c0 100644
   	eloop_register_signal_reconfig(wpa_supplicant_reconfig, global);
   
 diff --git a/package/network/services/hostapd/patches/601-ucode_support.patch b/package/network/services/hostapd/patches/601-ucode_support.patch
-index 4288e0f789..5e78e0d012 100644
+index 4288e0f789..78e4906922 100644
 --- a/package/network/services/hostapd/patches/601-ucode_support.patch
 +++ b/package/network/services/hostapd/patches/601-ucode_support.patch
+@@ -258,7 +258,7 @@ as adding/removing interfaces.
+  	 * set_sta_vlan - Bind a station into a specific interface (AP only)
+  	 * @priv: Private driver interface data
+  	 * @ifname: Interface (main or virtual BSS or VLAN)
+-@@ -6720,6 +6739,7 @@ union wpa_event_data {
++@@ -6724,6 +6743,7 @@ union wpa_event_data {
+  
+  	/**
+  	 * struct ch_switch
+@@ -266,7 +266,7 @@ as adding/removing interfaces.
+  	 * @freq: Frequency of new channel in MHz
+  	 * @ht_enabled: Whether this is an HT channel
+  	 * @ch_offset: Secondary channel offset
+-@@ -6730,6 +6750,7 @@ union wpa_event_data {
++@@ -6734,6 +6754,7 @@ union wpa_event_data {
+  	 * @punct_bitmap: Puncturing bitmap
+  	 */
+  	struct ch_switch {
+@@ -455,7 +455,7 @@ as adding/removing interfaces.
+  
+  static int cookie_handler(struct nl_msg *msg, void *arg)
+  {
+-@@ -10962,6 +11024,37 @@ static bool nl80211_is_drv_shared(void *
++@@ -10976,6 +11038,37 @@ static bool nl80211_is_drv_shared(void *
+  #endif /* CONFIG_IEEE80211BE */
+  
+  
+@@ -493,7 +493,7 @@ as adding/removing interfaces.
+  static int driver_nl80211_send_mlme(void *priv, const u8 *data,
+  				    size_t data_len, int noack,
+  				    unsigned int freq,
+-@@ -14510,6 +14603,8 @@ const struct wpa_driver_ops wpa_driver_n
++@@ -14525,6 +14618,8 @@ const struct wpa_driver_ops wpa_driver_n
+  	.set_acl = wpa_driver_nl80211_set_acl,
+  	.if_add = wpa_driver_nl80211_if_add,
+  	.if_remove = driver_nl80211_if_remove,
+@@ -521,7 +521,7 @@ as adding/removing interfaces.
+  
+  	if (link) {
+  		data.ch_switch.link_id = nla_get_u8(link);
+-@@ -4054,6 +4057,7 @@ static void do_process_drv_event(struct
++@@ -4117,6 +4120,7 @@ static void do_process_drv_event(struct
+  				     tb[NL80211_ATTR_CENTER_FREQ1],
+  				     tb[NL80211_ATTR_CENTER_FREQ2],
+  				     tb[NL80211_ATTR_PUNCT_BITMAP],
+@@ -529,7 +529,7 @@ as adding/removing interfaces.
+  				     0);
+  		break;
+  	case NL80211_CMD_CH_SWITCH_NOTIFY:
+-@@ -4066,6 +4070,7 @@ static void do_process_drv_event(struct
++@@ -4129,6 +4133,7 @@ static void do_process_drv_event(struct
+  				     tb[NL80211_ATTR_CENTER_FREQ1],
+  				     tb[NL80211_ATTR_CENTER_FREQ2],
+  				     tb[NL80211_ATTR_PUNCT_BITMAP],
 @@ -622,7 +622,7 @@ as adding/removing interfaces.
   CFLAGS += -DEAP_SERVER -DEAP_SERVER_IDENTITY
  --- a/wpa_supplicant/events.c
@@ -827,8 +957,39 @@ index ac7d3abd78..648641e43a 100644
   	    wpa_key_mgmt_ft(hapd->conf->wpa_key_mgmt)) {
   		const char *ft_iface;
   
+diff --git a/package/network/services/hostapd/patches/740-snoop_iface.patch b/package/network/services/hostapd/patches/740-snoop_iface.patch
+index 3c59865f84..35d95d21a1 100644
+--- a/package/network/services/hostapd/patches/740-snoop_iface.patch
++++ b/package/network/services/hostapd/patches/740-snoop_iface.patch
+@@ -112,7 +112,7 @@ untagged DHCP packets
+  	hapd->x_snoop_initialized = false;
+ --- a/src/drivers/driver.h
+ +++ b/src/drivers/driver.h
+-@@ -4350,7 +4350,7 @@ struct wpa_driver_ops {
++@@ -4354,7 +4354,7 @@ struct wpa_driver_ops {
+  	 * Returns: 0 on success, negative (<0) on failure
+  	 */
+  	int (*br_set_net_param)(void *priv, enum drv_br_net_param param,
+@@ -123,7 +123,7 @@ untagged DHCP packets
+  	 * get_wowlan - Get wake-on-wireless status
+ --- a/src/drivers/driver_nl80211.c
+ +++ b/src/drivers/driver_nl80211.c
+-@@ -12662,7 +12662,7 @@ static const char * drv_br_net_param_str
++@@ -12677,7 +12677,7 @@ static const char * drv_br_net_param_str
+  
+  
+  static int wpa_driver_br_set_net_param(void *priv, enum drv_br_net_param param,
+@@ -132,7 +132,7 @@ untagged DHCP packets
+  {
+  	struct i802_bss *bss = priv;
+  	char path[128];
+-@@ -12688,8 +12688,11 @@ static int wpa_driver_br_set_net_param(v
++@@ -12703,8 +12703,11 @@ static int wpa_driver_br_set_net_param(v
+  			return -EINVAL;
+  	}
+  
 diff --git a/package/network/services/hostapd/patches/780-Implement-APuP-Access-Point-Micro-Peering.patch b/package/network/services/hostapd/patches/780-Implement-APuP-Access-Point-Micro-Peering.patch
-index 157b7dbb82..dd17a37ad3 100644
+index 157b7dbb82..ae1169a896 100644
 --- a/package/network/services/hostapd/patches/780-Implement-APuP-Access-Point-Micro-Peering.patch
 +++ b/package/network/services/hostapd/patches/780-Implement-APuP-Access-Point-Micro-Peering.patch
 @@ -372,7 +372,7 @@ Hotfix-by: Sebastian Gottschall https://github.com/mirror/dd-wrt/commit/0c3001a6
@@ -854,10 +1015,31 @@ index 157b7dbb82..dd17a37ad3 100644
   		return resp;
   
 -@@ -6058,6 +6061,11 @@ static void handle_beacon(struct hostapd
-+@@ -6038,6 +6041,11 @@ static void handle_beacon(struct hostapd
++@@ -6037,6 +6040,11 @@ static void handle_beacon(struct hostapd
   				      0);
   
   	ap_list_process_beacon(hapd->iface, mgmt, &elems, fi);
+diff --git a/package/network/services/hostapd/patches/803-hostapd-fix-80211be-build.patch b/package/network/services/hostapd/patches/803-hostapd-fix-80211be-build.patch
+index 55c6e63581..c03371858b 100644
+--- a/package/network/services/hostapd/patches/803-hostapd-fix-80211be-build.patch
++++ b/package/network/services/hostapd/patches/803-hostapd-fix-80211be-build.patch
+@@ -1,6 +1,6 @@
+ --- a/src/ap/sta_info.c
+ +++ b/src/ap/sta_info.c
+-@@ -1836,3 +1836,22 @@ void ap_sta_free_sta_profile(struct mld_
++@@ -1907,3 +1907,22 @@ void ap_sta_free_sta_profile(struct mld_
+  	}
+  }
+  #endif /* CONFIG_IEEE80211BE */
+@@ -25,7 +25,7 @@
+ +
+ --- a/src/ap/sta_info.h
+ +++ b/src/ap/sta_info.h
+-@@ -417,23 +417,8 @@ int ap_sta_re_add(struct hostapd_data *h
++@@ -405,23 +405,8 @@ int ap_sta_re_add(struct hostapd_data *h
+  
+  void ap_free_sta_pasn(struct hostapd_data *hapd, struct sta_info *sta);
+  
 diff --git a/target/linux/mediatek/filogic/config-6.6 b/target/linux/mediatek/filogic/config-6.6
 index 818bcfa081..831f14a15d 100644
 --- a/target/linux/mediatek/filogic/config-6.6
