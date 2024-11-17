@@ -1,3 +1,24 @@
+diff --git a/include/package-pack.mk b/include/package-pack.mk
+index 9d06c8b647..5b1dc22bc6 100644
+--- a/include/package-pack.mk
++++ b/include/package-pack.mk
+@@ -45,6 +45,7 @@ dep_if=$(if $(findstring !,$(1)),$(call dep_neg,$(1)),$(call dep_pos,$(1)))
+ dep_val=$(word 2,$(call dep_split,$(1)))
+ strip_deps=$(strip $(subst +,,$(filter-out @%,$(1))))
+ filter_deps=$(foreach dep,$(call strip_deps,$(1)),$(if $(findstring :,$(dep)),$(call dep_if,$(dep)),$(dep)))
++sanitize_field=$(subst ",\",$(subst `,\`,$(strip $(1))))
+ 
+ define AddDependency
+   $$(if $(1),$$(if $(2),$$(foreach pkg,$(1),$$(PACK_$$(pkg))): $$(foreach pkg,$(2),$$(PACK_$$(pkg)))))
+@@ -339,7 +340,7 @@ else
+ 	$(FAKEROOT) $(STAGING_DIR_HOST)/bin/apk mkpkg \
+ 	  --info "name:$(1)$$(ABIV_$(1))" \
+ 	  --info "version:$(VERSION)" \
+-	  --info "description:$$(strip $$(Package/$(1)/description))" \
++	  --info "description:$(call sanitize_field,$(Package/$(1)/description))" \
+ 	  --info "arch:$(PKGARCH)" \
+ 	  --info "license:$(LICENSE)" \
+ 	  --info "origin:$(SOURCE)" \
 diff --git a/package/base-files/files/etc/sysctl.conf b/package/base-files/files/etc/sysctl.conf
 index 9ce5061657..709d5bc93a 100644
 --- a/package/base-files/files/etc/sysctl.conf
@@ -12,10 +33,10 @@ index 9ce5061657..709d5bc93a 100644
 +net.core.wmem_max=1027840
  # that directory is not backed-up by default and will not survive a reimage
 diff --git a/target/linux/mediatek/filogic/config-6.6 b/target/linux/mediatek/filogic/config-6.6
-index 818bcfa081..831f14a15d 100644
+index ba472b6ced..7e3d4df0f5 100644
 --- a/target/linux/mediatek/filogic/config-6.6
 +++ b/target/linux/mediatek/filogic/config-6.6
-@@ -500,3 +500,11 @@ CONFIG_ZONE_DMA32=y
+@@ -502,3 +502,11 @@ CONFIG_ZONE_DMA32=y
  CONFIG_ZSTD_COMMON=y
  CONFIG_ZSTD_COMPRESS=y
  CONFIG_ZSTD_DECOMPRESS=y
