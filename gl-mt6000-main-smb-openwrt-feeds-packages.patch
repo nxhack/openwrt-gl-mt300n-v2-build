@@ -1,5 +1,5 @@
 diff --git a/net/samba4/Makefile b/net/samba4/Makefile
-index 4afa87463..87a389455 100644
+index a7c10f0e9..2da0ba9da 100644
 --- a/net/samba4/Makefile
 +++ b/net/samba4/Makefile
 @@ -39,6 +39,7 @@ PKG_CONFIG_DEPENDS:= \
@@ -10,17 +10,16 @@ index 4afa87463..87a389455 100644
  include $(INCLUDE_DIR)/host-build.mk
  include $(INCLUDE_DIR)/kernel.mk
  include $(INCLUDE_DIR)/version.mk
-@@ -68,7 +69,8 @@ define Package/samba4-libs
+@@ -69,7 +70,7 @@ define Package/samba4-libs
  	+PACKAGE_libpam:libpam \
  	+SAMBA4_SERVER_VFS:attr \
  	+SAMBA4_SERVER_AVAHI:libavahi-client \
 -	+SAMBA4_SERVER_AD_DC:python3-cryptodome +SAMBA4_SERVER_AD_DC:python3-markdown +SAMBA4_SERVER_AD_DC:python3-dns +SAMBA4_SERVER_AD_DC:libopenldap +SAMBA4_SERVER_AD_DC:jansson +SAMBA4_SERVER_AD_DC:libarchive +SAMBA4_SERVER_AD_DC:acl +SAMBA4_SERVER_AD_DC:attr
-+	+SAMBA4_SERVER_AD_DC:python3-cryptodome +SAMBA4_SERVER_AD_DC:python3-markdown +SAMBA4_SERVER_AD_DC:python3-dns +SAMBA4_SERVER_AD_DC:libopenldap +SAMBA4_SERVER_AD_DC:jansson +SAMBA4_SERVER_AD_DC:libarchive +SAMBA4_SERVER_AD_DC:acl +SAMBA4_SERVER_AD_DC:attr \
-+	$(ICONV_DEPENDS)
++	+SAMBA4_SERVER_AD_DC:python3-cryptodome +SAMBA4_SERVER_AD_DC:python3-markdown +SAMBA4_SERVER_AD_DC:python3-dns +SAMBA4_SERVER_AD_DC:libopenldap +SAMBA4_SERVER_AD_DC:jansson +SAMBA4_SERVER_AD_DC:libarchive +SAMBA4_SERVER_AD_DC:acl +SAMBA4_SERVER_AD_DC:attr $(ICONV_DEPENDS)
  endef
  
  define Package/samba4-server
-@@ -148,7 +150,7 @@ CONFIGURE_ARGS:=$(filter-out	\
+@@ -149,7 +150,7 @@ CONFIGURE_ARGS:=$(filter-out	\
  	--build=%			\
  	--program-prefix=%	\
  	--program-suffix=% 	\
@@ -29,7 +28,7 @@ index 4afa87463..87a389455 100644
  	--disable-ipv6		\
  	, $(CONFIGURE_ARGS))
  
-@@ -178,7 +180,8 @@ CONFIGURE_ARGS += \
+@@ -179,7 +180,8 @@ CONFIGURE_ARGS += \
  		--disable-spotlight \
  		--enable-fhs \
  		--without-automount \
